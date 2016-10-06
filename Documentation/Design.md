@@ -29,9 +29,9 @@ used to buy different
 upgrades (trading? Treaties? Sending points to other players?).
 
 ## Attacking
- Attacking other territories can end in a success or a failure.
- -Attacking a region occupied by another nation has a lower chance of success
- -The chance of success while attacking a region increases accordingly to
+Attacking other territories can end in a success or a failure.
+-Attacking a region occupied by another nation has a lower chance of success  
+-The chance of success while attacking a region increases accordingly to
  neighbouring territories
  occupied by the attacker (the more neighbours the attacker is in control of,
  the higher the chance).
@@ -39,18 +39,18 @@ upgrades (trading? Treaties? Sending points to other players?).
  regions in tight spaces have
  less neighbours, thus reducing the chance of attacker conquering the territory
  around and then easily
- finishing off the desired region
+ finishing off the desired region  
  -The chance of success is lowered by the number of neighbouring regions
  controlled by the
- defender
+ defender  
  -The chance of success can be further modified by different upgrades bought by
- defenders/attackers
+ defenders/attackers  
  -The chance of success can also be modified by territory-specified upgrades
  (e.g. Castles, that could
  be destroyed if the territory gets conquered, removing the bonuses) –do we
  really want this feature
- or would it be too much?
- -Territorial penalties/rewards? - same as above
+ or would it be too much?  
+ -Territorial penalties/rewards? - same as above  
  
 ## Upgrades
 TBA
@@ -60,7 +60,7 @@ Simple messaging? Treaties with conditions? Trading territories?
  
 ## Victory
 A player wins if they control a certain percentage (of all territories)/(over
-other players).
+other players).  
 Players entering the server at that point are displayed a message with the
 winner and/or their
 avatar/anthem/message (depending on what we include).
