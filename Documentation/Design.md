@@ -18,6 +18,7 @@ game starts.
 
 ## The Map
 ![Image of map](map_example_blank.png)
+
 ## Action points
 Players get 'action points' over time (depending on the server- could be every 5
 seconds for
@@ -26,6 +27,7 @@ then use these
 points to 'attack' territories around their borders. Action points can also be
 used to buy different
 upgrades (trading? Treaties? Sending points to other players?).
+
 ## Attacking
  Attacking other territories can end in a success or a failure.
  -Attacking a region occupied by another nation has a lower chance of success
@@ -49,13 +51,16 @@ upgrades (trading? Treaties? Sending points to other players?).
  really want this feature
  or would it be too much?
  -Territorial penalties/rewards? - same as above
- ## Upgrades
- TBA
- ## Politics, player interaction
- Simple messaging? Treaties with conditions? Trading territories?
- ## Victory
- A player wins if they control a certain percentage (of all territories)/(over
- other players).
- Players entering the server at that point are displayed a message with the
- winner and/or their
- avatar/anthem/message (depending on what we include).
+ 
+## Upgrades
+TBA
+ 
+## Politics, player interaction
+Simple messaging? Treaties with conditions? Trading territories?
+ 
+## Victory
+A player wins if they control a certain percentage (of all territories)/(over
+other players).
+Players entering the server at that point are displayed a message with the
+winner and/or their
+avatar/anthem/message (depending on what we include).
