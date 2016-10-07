@@ -14,7 +14,7 @@ S_MAINMENU_BUTTON1_CAPTION = "Join game";
 -Static variables are **not allowed**  
 -Use g_name for global variables
 ###Files
--Use lowercase only (unless really required) with underscores
+-Use lowercase only (unless really required) with underscores  
 -Include header files to all your source files
 #Style
 ##Tabs, brackets, if statements
