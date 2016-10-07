@@ -11,11 +11,7 @@ Author: Kamil
 
 #include <iostream>
 #include <exception>
-
-//heads
-void loadRules() throw(std::exception);
-void gameLoop();
-void loadSettings();
+#include "main.h"
 
 //settings variables - hardcoded for now
 int g_turn_hours = 0;
@@ -41,21 +37,35 @@ int main() {
 	}
 	catch (std::exception x) {
 		std::cout << x.what();
-		return 0;
+		shutDown();
 	}
 	std::cout << "Settings loaded succesfully.\n";
 	g_state = STATE_WARMUP;
+	gameLoop();
 	return 0;
 }
 
 void gameLoop() { //tba
-
+	while (g_state != STATE_EXIT) {
+		g_state = STATE_EXIT;
+	}
+	std::cout << "Game has finished.\n";
+	system("pause");
+	void shutDown();
 }
 
 void loadRules() throw(std::exception) { //tba
-	throw std::exception("Failed to load rules!\n");
+	//throw std::exception("Failed to load rules!\n");
 }
 
+void shutDown() {
+	saveLogs();
+	exit(0);
+}
+
+void saveLogs() {
+	return;
+}
 void loadSettings() { //tba
 	return;
 }
