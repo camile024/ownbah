@@ -12,6 +12,7 @@ Author: Kamil
 #include <iostream>
 #include <exception>
 #include "main.h"
+#include "stdlib.h"
 
 //settings variables - hardcoded for now
 int g_turn_hours = 0;
