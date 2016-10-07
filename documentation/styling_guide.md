@@ -2,7 +2,7 @@
 #Comments
 -Use short, descriptive comments  
 -Include your name/nickname in your files/functions/modifications to other people's work
-#Vars/Constants naming
+#Vars/Constants/Files naming
 ##Constants
 -ALL_CAPITAL_LETTERS   
 -Strings used in-game will probably be kept in one file and we'll be refering to that file. E.g. if there's a description of a particular
@@ -13,6 +13,9 @@ S_MAINMENU_BUTTON1_CAPTION = "Join game";
 -Initialise when declaring  
 -Static variables are **not allowed**  
 -Use g_name for global variables
+###Files
+-Use lowercase only (unless really required) with underscores
+-Include header files to all your source files
 #Style
 ##Tabs, brackets, if statements
 -We use tabs. Use proper indentation (nesting)  
