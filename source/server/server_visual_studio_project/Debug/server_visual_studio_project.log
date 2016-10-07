@@ -1,5 +1,5 @@
 ﻿  main.cpp
-h:\github\ownbah\source\server\server_visual_studio_project\main.cpp(16): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-h:\github\ownbah\source\server\server_visual_studio_project\main.cpp(55): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+h:\github\ownbah\source\server\server_visual_studio_project\main.h(3): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+h:\github\ownbah\source\server\server_visual_studio_project\main.cpp(57): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
   server_visual_studio_project.vcxproj -> H:\GitHub\ownbah\source\server\server_visual_studio_project\Debug\server_visual_studio_project.exe
   server_visual_studio_project.vcxproj -> H:\GitHub\ownbah\source\server\server_visual_studio_project\Debug\server_visual_studio_project.pdb (Full PDB)
