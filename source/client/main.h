@@ -8,6 +8,6 @@
 #include "clientDebug.h"
 #include "main.h"
 
-int main(int argv, char** args);
-bool checkDebug(int argv, char** args);
-bool checkDev(int argv, char** args);
+int main(int argc, char* argv[]);
+bool checkDebug(int argc, char* argv[]);
+bool checkDev(int argc, char* argv[]);
