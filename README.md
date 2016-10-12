@@ -1,5 +1,5 @@
 # ownbah
-Our own game with blackjack and hookers
+Our own game
 
 ## Contributing
 
