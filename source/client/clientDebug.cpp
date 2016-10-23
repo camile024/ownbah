@@ -2,6 +2,7 @@
 CLIENT DEBUGGING MODULE
 Author: Kamil
 */
+#pragma once
 #include <iostream>
 #include <exception>
 #include <stdio.h>
@@ -20,28 +21,28 @@ Author: Kamil
 //main dev function, called in main.cpp
 void enterDev(int argc, char** argv) {
 		printMsg(MSG_NORMAL, "Entered development mode.");
-		devLoop(argc, argv);
+		devLoop();
 		printMsg(MSG_NORMAL, "Closing down");
 		exit(0);
 }
 
 //devLoop allows for using commands to make events occur
-void devLoop(int argc, char** argv) {
+void devLoop() {
 	std::string cmd = "";
 	while (cmd != "quit" && cmd != "q" && cmd != "exit") {
 		getline(std::cin, cmd);
-		runCommand(cmd, argc, argv);
+		runCommand(cmd);
 	}
 }
 
 //runs commands (switch statement only works with integral types, thus I had to use if statements. Keeping em in one function makes things clearer
-void runCommand(std::string cmd, int argc, char** argv) {
+void runCommand(std::string cmd) {
 	std::string arguments[10];
 	getArguments(cmd, arguments);
 	cmd = arguments[0];
 	if (cmd == "help") { cmd_help(); }
 	else if (cmd == "argst") { cmd_argst(arguments); }
-	else if (cmd == "title") { cmd_title(argc, argv); }
+	else if (cmd == "title") { cmd_title(); }
 }
 
 //separates all the words (up to 10) into a string array (including the command itself)
@@ -83,11 +84,11 @@ void printMsg(int type, std::string message) {
 
 */
 void cmd_help() {
-	printMsg(MSG_NORMAL, "Available commands: quit, q, exit, title");
+	printMsg(MSG_NORMAL, "Available commands: quit, q, exit, title, argst");
 }
 
-void cmd_title(int argc, char** argv) {
-	window(argc, argv);
+void cmd_title() {
+	titleLoop();
 }
 
 void cmd_argst(std::string *arguments) {
