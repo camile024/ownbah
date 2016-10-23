@@ -1,3 +1,5 @@
+source/client/libraries/precompiled(MSVS)/
+
 # Object files
 *.o
 *.ko
