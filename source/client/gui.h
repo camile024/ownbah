@@ -16,3 +16,7 @@
 #include "clientDebug.h"
 
 
+class UI_Node;
+class UI_Panel;
+class UI_Button;
+

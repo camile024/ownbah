@@ -17,4 +17,9 @@
 
 void display(void);
 void init(void);
-void window(int argc, char** argv);
+void window();
+void titleLoop();
+void doInput();
+void doEngine();
+void doDrawing();
+void login(int ID);
