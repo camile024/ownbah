@@ -29,15 +29,12 @@ Author: Kamil
 *	Author: Kamil
 */
 void init(){
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(133.00f/255, 160.00f/255, 242.00f/255, 0.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(45, 	//view angle
-		1.0,    //aspect ratio
-		10.0,   //near clip
-		200.0); //far clip
 	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	//glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+	glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 }
 
 /*
@@ -49,6 +46,18 @@ static void display(void) {
 	glPushMatrix();     	//saves the current matrix on the top of the matrix stack
 	glTranslatef(0, 0, -100); //translates the current matrix 0 in x, 0 in y and -100 in z
 							  //glFlush();
+	UI_Panel title(-1, 1, 2, 0.5);
+	UI_Panel menu(-0.55, 0.5, 1.1, 1.2);
+	UI_Button play(&menu, 0.1, 0.1, 0.9, 0.15, "Play");
+	UI_Button options(&menu, 0.1, 0.3, 0.9, 0.15, "Options");
+	title.setColorRGB(228, 151, 37, 170);
+	menu.setColorRGB(255, 193, 100, 100);
+	glLoadIdentity();
+	title.draw();
+	menu.draw();
+
+	glEnd();
+	glutSwapBuffers();
 }
 
 /*
@@ -62,7 +71,7 @@ void window(){
 	glutInit(&argc, argv);
 	int screenX = GetSystemMetrics(SM_CXSCREEN);
 	int screenY = GetSystemMetrics(SM_CYSCREEN);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(screenX / 8 + 200, screenY / 4 + 200);
 	glutInitWindowPosition(screenX / 2 - screenX / 8 - 100, screenY / 2 - screenY / 4);
 	glutCreateWindow("Title");
@@ -76,7 +85,7 @@ void window(){
 *	Main title loop
 *	Author: Kamil
 */
-void titleLoop(){
+void titleCreate(){
 	doInput();
 	doEngine();
 	doDrawing();
@@ -92,7 +101,6 @@ void doEngine() {
 
 void doDrawing() {
 	window();
-	glutSwapBuffers();
 }
 
 void login(int ID) {

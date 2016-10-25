@@ -88,7 +88,7 @@ void cmd_help() {
 }
 
 void cmd_title() {
-	titleLoop();
+	titleCreate();
 }
 
 void cmd_argst(std::string *arguments) {
