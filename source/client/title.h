@@ -18,7 +18,7 @@
 void display(void);
 void init(void);
 void window();
-void titleLoop();
+void titleCreate();
 void doInput();
 void doEngine();
 void doDrawing();
