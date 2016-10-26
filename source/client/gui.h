@@ -28,6 +28,7 @@ class UI_Button;
 
 
 
+
 /*
 *=========================================
 *	General node for GUI
@@ -40,6 +41,7 @@ protected:
 	float posY;
 	float width;
 	float height;
+	//UI_Panel& parent;
 	std::string name = "";
 public:
 	virtual void draw(void) = 0;
@@ -48,6 +50,7 @@ public:
 	float getY() { return posY; }
 	float getWidth() { return width; }
 	float getHeight() { return height; }
+	virtual UI_Panel& getParent(void) = 0;
 	bool operator==(const UI_Node &node) const {
 		return (this->posX == node.posX
 			&& this->posY == node.posY
@@ -55,13 +58,6 @@ public:
 			&& this->height == node.height
 			&& this->name == node.name);
 	}
-	/*/friend class UI_Panel;
-	UI_Node() = default;
-	UI_Node(int x, int y, int x2, int y2) {
-	posX = x; posY = y; width = x2; height = y2;
-	parent = new UI_Node();
-	}
-	*/
 };
 
 
@@ -72,7 +68,12 @@ public:
 *	Author: Kamil
 *=========================================
 */
-class UI_Panel : public UI_Node {
+class UI_Panel {
+protected:
+	float posX;
+	float posY;
+	float width;
+	float height;
 	std::vector<UI_Node*> nodes;
 	std::string name = "Panel";
 	struct {
@@ -83,11 +84,17 @@ class UI_Panel : public UI_Node {
 	} color;
 public:
 	UI_Panel(float, float, float, float);
+	std::string getName() { return name; }
+	float getX() { return posX; }
+	float getY() { return posY; }
+	float getWidth() { return width; }
+	float getHeight() { return height; }
 	void setColor(float, float, float, float);
 	void setColorRGB(int, int, int, int);
-	void addNode(UI_Node*);
-	void removeNode(UI_Node*);
+	void addNode(UI_Node&);
+	void removeNode(UI_Node&);
 	void draw();
+	std::vector<UI_Node*>& getNodes();
 };
 
 /*
@@ -101,7 +108,7 @@ public:
 class UI_Button : public UI_Node {
 	std::string caption;
 	void *action;
-	UI_Panel *parent;
+	UI_Panel &parent;
 	byte state = BTN_ACTIVE;
 	std::string name = "Button";
 	struct {
@@ -115,5 +122,6 @@ public:
 	void draw();
 	void setColor(float, float, float);
 	void setColorRGB(int, int, int);
-	UI_Button(UI_Panel*, float, float, float, float, std::string);
+	UI_Panel& getParent() { return parent; }
+	UI_Button(UI_Panel&, float, float, float, float, std::string);
 };

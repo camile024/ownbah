@@ -29,6 +29,13 @@
 
 /*
 
+============
+== GENERAL==
+============
+
+
+/*
+
 ===========
 == PANEL ==
 ===========
@@ -36,6 +43,9 @@
 */
 /*
 *	UI_Panel constructor
+*	x,y - coordinates inside window (left-top corner of panel)
+*	x2,y2 - width and height of the window (don't confuse with 
+*		coordinates of the opposite corner!)
 */
 UI_Panel::UI_Panel(float x, float y, float x2, float y2){
 	posX = x;
@@ -56,9 +66,9 @@ void UI_Panel::draw() {
 		//printMsg(MSG_LOG, "Added point at " + std::to_string(posX) + ", " + std::to_string(posY));
 		glVertex3f(posX + width, posY, 0);
 		//printMsg(MSG_LOG, "Added point at " + std::to_string(posX + width) + ", " + std::to_string(posY));
-		glVertex3f(posX + width, posY - height, 0);
+		glVertex3f(posX + width, posY + height, 0);
 		//printMsg(MSG_LOG, "Added point at " + std::to_string(posX + width) + ", " + std::to_string(posY + height));
-		glVertex3f(posX, posY - height, 0);
+		glVertex3f(posX, posY + height, 0);
 		//printMsg(MSG_LOG, "Added point at " + std::to_string(posX) + ", " + std::to_string(posY + height));
 	}
 	glEnd();
@@ -93,24 +103,31 @@ void UI_Panel::setColorRGB(int r, int g, int b, int a) {
 /*
 *	Adds nodes to the panel list
 */
-void UI_Panel::addNode(UI_Node *node) {
+void UI_Panel::addNode(UI_Node &node) {
 	if (nodes.size() < UI_MAX_NODES) {
-		nodes.push_back(node);
+		nodes.push_back(&node);
 	}
 	else {
-		printMsg(MSG_ERROR, "Node '" + node->getName() + "' not added. nodeCount too high.");
+		printMsg(MSG_ERROR, "Node '" + node.getName() + "' not added. nodeCount too high.");
 	}
 }
 
 /*
-*	Removes a specific Node from the list
+*	Removes a specific Node from the list (untested)
 */
-void UI_Panel::removeNode(UI_Node *node) {
+void UI_Panel::removeNode(UI_Node &node) {
 	for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
-		if (*i == node) {
+		if (*i == &node) {
 			nodes.erase(i);
 		}
 	}
+}
+
+/*
+*	Returns a vector with all the nodes of the panel (not tested)
+*/
+std::vector<UI_Node*>& UI_Panel::getNodes() {
+	return nodes;
 }
 
 /*
@@ -121,6 +138,8 @@ void UI_Panel::removeNode(UI_Node *node) {
 
 */
 
+/*
+*/
 void UI_Button::onClick(void(*func)) {
 	action = func;
 }
@@ -145,13 +164,19 @@ void UI_Button::setColorRGB(int r, int g, int b) {
 	color.b = b / 255.00;
 }
 
-UI_Button::UI_Button(UI_Panel *pan, float x, float y, float width, float height, std::string caption) : parent(pan) {
+/*
+*	Button constructor
+*	pan - panel the button belongs to
+*	x,y,width,heigh - starting coords (left-top) and size
+*	caption - caption
+*/
+UI_Button::UI_Button(UI_Panel &pan, float x, float y, float width, float height, std::string caption) : parent(pan) {
 	posX = x;
 	posY = y;
 	this->width = width;
 	this->height = height;
 	this->caption = caption;
-	pan->addNode(this);
+	pan.addNode(*this);
 }
 
 /*
@@ -161,6 +186,11 @@ void UI_Button::setState(byte s) {
 	state = s;
 }
 
+/*
+*	Draws dope buttons
+*	Needs putting all the vertices into a single array
+*		for readability
+*/
 void UI_Button::draw() {
 	glBegin(GL_POLYGON);
 	switch (state) {
@@ -168,21 +198,21 @@ void UI_Button::draw() {
 				glColor4f(color.r, color.g, color.b, 255);
 			break;
 		case BTN_DOWN:
-
+				glColor4f(color.r, color.g, color.b, 100);
 			break;
 		case BTN_DISABLED:
 				glColor4f(color.r, color.g, color.b, 170);
 			break;
 	}
-	float x = posX + parent->getX();
-	float y = parent->getY() - posY;
-	float cornerOffset = 0.02;
-	glVertex3f(x, y-cornerOffset, 0);
+	float x = posX + parent.getX();
+	float y = parent.getY() + posY;
+	float cornerOffset = 5.0f;
+	glVertex3f(x, y+cornerOffset, 0);
 	glVertex3f(x + cornerOffset, y, 0);
 	glVertex3f(x + width, y, 0);
-	glVertex3f(x + width, y - height + cornerOffset, 0);
-	glVertex3f(x + width - cornerOffset, y - height, 0);
-	glVertex3f(x, y - height, 0);
+	glVertex3f(x + width, y + height - cornerOffset, 0);
+	glVertex3f(x + width - cornerOffset, y + height, 0);
+	glVertex3f(x, y + height, 0);
 	glEnd();
 
 	/* ---Draw outline ---*/
@@ -192,11 +222,11 @@ void UI_Button::draw() {
 	if (state == BTN_DOWN) {
 		glColor4f(100, 100, 100, 190);
 	}
-	glVertex3f(x, y - cornerOffset, 0);
+	glVertex3f(x, y + cornerOffset, 0);
 	glVertex3f(x + cornerOffset, y, 0);
 	glVertex3f(x + width, y, 0);
-	glVertex3f(x + width, y - height + cornerOffset, 0);
-	glVertex3f(x + width - cornerOffset, y - height, 0);
-	glVertex3f(x, y - height, 0);
+	glVertex3f(x + width, y + height - cornerOffset, 0);
+	glVertex3f(x + width - cornerOffset, y + height, 0);
+	glVertex3f(x, y + height, 0);
 	glEnd();
 }
