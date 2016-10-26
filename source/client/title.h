@@ -14,12 +14,14 @@
 
 //custom headers
 #include "clientDebug.h"
+#include "gui.h"
 
 void display(void);
 void init(void);
 void window();
 void titleCreate();
-void doInput();
-void doEngine();
 void doDrawing();
 void login(int ID);
+bool withinCoords(int x, int y, UI_Node* a);
+void freeTitleUIObjects();
+void mouseInput(int key, int state, int x, int y);
