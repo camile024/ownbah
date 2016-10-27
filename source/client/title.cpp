@@ -37,7 +37,13 @@ static int windowSizeY = GetSystemMetrics(SM_CYSCREEN)/4+200;
 static UI_Panel *ui_title; //title graphic/logo
 static UI_Panel *ui_menu; //menu panel
 static UI_Button *ui_play; //play/join game button
+static UI_Button *ui_host; //host game button
 static UI_Button *ui_options; //options button
+static UI_Button *ui_exit; //exit button
+static const int MIN_WINDOW_WIDTH = 350;
+static const int MIN_WINDOW_HEIGHT = 400;
+static const int MAX_WINDOW_WIDTH = 500;
+static const int MAX_WINDOW_HEIGHT = 700;
 
 /*
 *	Initialising OpenGL inside Glut
@@ -58,9 +64,11 @@ void init(){
 */
 static void display(void) {
 	printMsg(MSG_LOG, "Scene redrawn.");
-	/*Get current window sizes*/
-	windowSizeX = glutGet(GLUT_WINDOW_WIDTH);
-	windowSizeY = glutGet(GLUT_WINDOW_HEIGHT);
+	bool windowChanged = false;
+	/*	Get current window sizes and change them accordingly
+		If window sizes have changed, make sure to recreate objects accordingly
+	*/
+	windowChanged = reshapeWindow();
 	/*Clear the window*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/*Set the viewport and projection matrix accordingly*/
@@ -68,13 +76,18 @@ static void display(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, windowSizeX, windowSizeY, 0, -1.0, 1.0);
-	/*Free memory of UI items in case they already exist*/
-	freeTitleUIObjects();
 	/*Initialise resolution-adjusted items*/
-	ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
-	ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
-	ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Play");
-	ui_options = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Options");
+	if (ui_title == nullptr || windowChanged) {
+		freeTitleUIObjects(); //Free memory of UI items in case they already exist
+		ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
+		ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
+		ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Join game");
+		ui_play->setAction(login);
+		ui_host = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Host a server");
+		ui_options = new UI_Button(*ui_menu, 15, 100, windowSizeX / 5 * 3 - 30, 30, "Options");
+		ui_exit = new UI_Button(*ui_menu, 15, 145, windowSizeX / 5 * 3 - 30, 30, "Exit");
+		ui_exit->setAction(exit);
+	}
 	
 	/*Do the actual drawing*/
 	ui_title->setColorRGB(228, 151, 37, 170);
@@ -84,6 +97,31 @@ static void display(void) {
 	glutSwapBuffers();
 }
 
+/*
+*	Makes sure the window is within a reasonable size
+*	Lets the drawing function know if the sizes have changed
+*	since the last display() call
+*/
+bool reshapeWindow() {
+	if (windowSizeX != glutGet(GLUT_WINDOW_WIDTH)
+		|| windowSizeY != glutGet(GLUT_WINDOW_HEIGHT)) {
+		windowSizeX = glutGet(GLUT_WINDOW_WIDTH);
+		windowSizeY = glutGet(GLUT_WINDOW_HEIGHT);
+		if (windowSizeY < MIN_WINDOW_HEIGHT) {
+			glutReshapeWindow(windowSizeX, MIN_WINDOW_HEIGHT);
+		} else if (windowSizeY > MAX_WINDOW_HEIGHT) {
+			glutReshapeWindow(windowSizeX, MAX_WINDOW_HEIGHT);
+		}
+
+		if (windowSizeX < MIN_WINDOW_WIDTH) {
+			glutReshapeWindow(MIN_WINDOW_WIDTH, windowSizeY);
+		} else if (windowSizeX > MAX_WINDOW_WIDTH) {
+			glutReshapeWindow(MAX_WINDOW_WIDTH, windowSizeY);
+		}
+		return true;
+	}
+	return 0;
+}
 /*
 *	Initialising title window and glut
 *	Author: Kamil
@@ -121,13 +159,19 @@ void titleCreate(){
 *	Handles mouse input
 */
 void mouseInput(int key, int state, int x, int y) {
-	if (state == GLUT_DOWN && key == GLUT_LEFT_BUTTON) {
+	if (key == GLUT_LEFT_BUTTON) {
 		std::vector<UI_Node*>& nodes = ui_menu->getNodes();
 		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
 			if (withinCoords(x, y, *i)) {
 				UI_Button * btn = dynamic_cast<UI_Button*>(*i);
 				if (btn != nullptr) {
-					btn->setState(BTN_DOWN);
+					if (state == GLUT_DOWN) {
+						btn->setState(BTN_DOWN);
+					}
+					else {
+						btn->setState(BTN_ACTIVE);
+						btn->onClick();
+					}
 					glutPostRedisplay();
 					printMsg(MSG_LOG, "Clicked a button.");
 				}
@@ -157,7 +201,7 @@ void doDrawing() {
 	
 }
 
-void login(int ID) {
+void login() {
 	printMsg(MSG_LOG, "Logging in...");
 }
 
@@ -169,4 +213,8 @@ void freeTitleUIObjects() {
 	free(ui_menu);
 	free(ui_play);
 	free(ui_options);
+}
+
+void exit() {
+	exit(0);
 }
