@@ -139,11 +139,20 @@ std::vector<UI_Node*>& UI_Panel::getNodes() {
 */
 
 /*
+* Runs the action
 */
-void UI_Button::onClick(void(*func)) {
-	action = func;
+void UI_Button::onClick() {
+	if (action != nullptr) {
+		action();
+	}
 }
 
+/*
+*	Sets the action to a specified function
+*/
+void UI_Button::setAction(void (*func)()) {
+	action = func;
+}
 /*
 *	Sets a color for button
 *	BEWARE: USE 0.0-1.0 RANGE!
@@ -192,41 +201,42 @@ void UI_Button::setState(byte s) {
 *		for readability
 */
 void UI_Button::draw() {
-	glBegin(GL_POLYGON);
+	/* Array with coordinates for the button */
+	float x = posX + parent.getX();
+	float y = parent.getY() + posY;
+	float cornerOffset = 5.0f;
+	float arr[] = {
+		x, y + cornerOffset, 0,
+		x + cornerOffset, y, 0,
+		x + width, y, 0,
+		x + width, y + height - cornerOffset, 0,
+		x + width - cornerOffset, y + height, 0,
+		x, y + height, 0,
+	};
+	/* Start doing the array drawing for the button body */
+	glEnableClientState(GL_VERTEX_ARRAY);
+	/* Define color depending on the button state */
 	switch (state) {
 		case BTN_ACTIVE:
 				glColor4f(color.r, color.g, color.b, 255);
 			break;
 		case BTN_DOWN:
-				glColor4f(color.r, color.g, color.b, 100);
+				glColor4f(color.r/2, color.g/2, color.b/2, 100);
 			break;
 		case BTN_DISABLED:
 				glColor4f(color.r, color.g, color.b, 170);
 			break;
 	}
-	float x = posX + parent.getX();
-	float y = parent.getY() + posY;
-	float cornerOffset = 5.0f;
-	glVertex3f(x, y+cornerOffset, 0);
-	glVertex3f(x + cornerOffset, y, 0);
-	glVertex3f(x + width, y, 0);
-	glVertex3f(x + width, y + height - cornerOffset, 0);
-	glVertex3f(x + width - cornerOffset, y + height, 0);
-	glVertex3f(x, y + height, 0);
-	glEnd();
+	/* Draw the body */
+	glVertexPointer(3, GL_FLOAT, 0, arr);
+	glDrawArrays(GL_POLYGON, 0, 6);
 
 	/* ---Draw outline ---*/
-	glLineWidth(1.5);
-	glBegin(GL_LINE_LOOP);
+	glLineWidth(1);
 	glColor4f(0, 0, 0, 255);
 	if (state == BTN_DOWN) {
 		glColor4f(100, 100, 100, 190);
 	}
-	glVertex3f(x, y + cornerOffset, 0);
-	glVertex3f(x + cornerOffset, y, 0);
-	glVertex3f(x + width, y, 0);
-	glVertex3f(x + width, y + height - cornerOffset, 0);
-	glVertex3f(x + width - cornerOffset, y + height, 0);
-	glVertex3f(x, y + height, 0);
-	glEnd();
+	glDrawArrays(GL_LINE_LOOP, 0, 6);
+	glDisableClientState(GL_VERTEX_ARRAY);
 }

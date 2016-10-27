@@ -107,7 +107,7 @@ public:
 */
 class UI_Button : public UI_Node {
 	std::string caption;
-	void *action;
+	void (*action)(void);
 	UI_Panel &parent;
 	byte state = BTN_ACTIVE;
 	std::string name = "Button";
@@ -118,7 +118,8 @@ class UI_Button : public UI_Node {
 	} color;
 public:
 	void setState(byte);
-	void onClick(void(*));
+	void onClick();
+	void setAction(void (*)());
 	void draw();
 	void setColor(float, float, float);
 	void setColorRGB(int, int, int);
