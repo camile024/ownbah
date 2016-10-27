@@ -6,7 +6,7 @@
    * store territory's unique x,y coordinates  
    * recursively fill the white area  
   	 * if white, putpixel, do the same for pixels around - with unique colour calculated from ID (should use function for this one)    
-3. Store the image for future reference ([territory picking](map_management#territory-picking-client))  
+3. Store the image for future reference ([territory picking](map_management.md#territory-picking-client))  
 
 #Map drawing (client)  
 1. Draw the map image  
