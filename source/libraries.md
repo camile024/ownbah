@@ -3,8 +3,8 @@ Put all the libraries used in here (with version and download link if possible) 
 If possible - try to upload precompiled libraries to folders according to your system and the executable (e.g. client/libraries/precompiled(MSVS)  
 Libraries should also be listed on top of the main.cpp file of both executables.  
 #Client
--GluT (freeglut 3.0.0) - creating windows, 
--OpenGL (glew 2.0.0) - all the drawing
+-GluT (freeglut 3.0.0) - creating windows,  
+-OpenGL (glew 2.0.0) - all the drawing  
 
 #Server
 -none-  
