@@ -27,3 +27,4 @@ bool reshapeWindow();
 bool withinCoords(int x, int y, UI_Node* a);
 void freeTitleUIObjects();
 void mouseInput(int key, int state, int x, int y);
+void mouseMove(int x, int y);

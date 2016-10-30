@@ -50,7 +50,7 @@ static const int MAX_WINDOW_HEIGHT = 700;
 *	Author: Kamil
 */
 void init(){
-	glClearColor(133.00f/255, 160.00f/255, 242.00f/255, 0.0);
+	glClearColor(0.0f/255, 0.0f/255, 0.0f/255, 0.0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glShadeModel(GL_SMOOTH);
@@ -96,6 +96,8 @@ static void display(void) {
 	ui_menu->draw();
 	glutSwapBuffers();
 }
+
+
 
 /*
 *	Makes sure the window is within a reasonable size
@@ -145,7 +147,11 @@ void window(){
 	/*Redirect glut to specific functions*/
 	glutDisplayFunc(display);
 	glutMouseFunc(mouseInput);
+	glutPassiveMotionFunc(mouseMove);
+	display();
+	//glutIdleFunc(drawUI);
 	glutMainLoop();
+	
 }
 
 /*
@@ -160,6 +166,8 @@ void titleCreate(){
 */
 void mouseInput(int key, int state, int x, int y) {
 	if (key == GLUT_LEFT_BUTTON) {
+		/* The following piece of code iterates over all the nodes in "ui_menu" object 
+			and checks if they're within given X,Y coordinates. */
 		std::vector<UI_Node*>& nodes = ui_menu->getNodes();
 		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
 			if (withinCoords(x, y, *i)) {
@@ -172,12 +180,32 @@ void mouseInput(int key, int state, int x, int y) {
 						btn->setState(BTN_ACTIVE);
 						btn->onClick();
 					}
-					glutPostRedisplay();
 					printMsg(MSG_LOG, "Clicked a button.");
 				}
 			}
 		}
 	}
+	glutPostRedisplay();
+}
+
+/*
+*	Handles moving the mouse and hovering over objects
+*/
+void mouseMove(int x, int y) {
+	std::vector<UI_Node*>& nodes = ui_menu->getNodes();
+	for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
+		UI_Button * btn = dynamic_cast<UI_Button*>(*i);
+		if (btn != nullptr) {
+			if (withinCoords(x, y, *i)){
+				btn->setState(BTN_HOVER);
+			} else {
+				if (btn->getState() != BTN_DISABLED) {
+					btn->setState(BTN_ACTIVE);
+				}
+			}
+		}
+	}
+	glutPostRedisplay();
 }
 
 /*
@@ -213,6 +241,8 @@ void freeTitleUIObjects() {
 	free(ui_menu);
 	free(ui_play);
 	free(ui_options);
+	free(ui_host);
+	free(ui_exit);
 }
 
 void exit() {
