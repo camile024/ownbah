@@ -1,5 +1,10 @@
-# ownbah
-Our own game
+# The Risk
+A multiplayer online game. An opportunity to learn C++, OpenGL and other libraries/coding practices/solutions to networking, graphics, databases and plain coding. Currently we have [12] members and we are waiting for a website to be put up.  
+  
+Description of the design can be found [here](documentation/design.md).  
+Style guide: [documentation/styling_guide.md](documentation/styling_guide.md)  
+Other documentation: [/documentation/](documentation/)  
+Source of the client (mostly GUI OpenGL stuff): [source/client/](source/client)  
 
 ## Contributing
 
