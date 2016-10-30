@@ -20,6 +20,7 @@
 #define BTN_ACTIVE 0
 #define BTN_DOWN 1
 #define BTN_DISABLED 2
+#define BTN_HOVER 3
 
 interface UI_Node;
 class UI_Panel;
@@ -118,6 +119,7 @@ class UI_Button : public UI_Node {
 	} color;
 public:
 	void setState(byte);
+	byte getState();
 	void onClick();
 	void setAction(void (*)());
 	void draw();
