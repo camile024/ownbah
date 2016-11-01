@@ -1,0 +1,8 @@
+#Window (Panel)
+###Resolution (comboBox)
+Different resolutions with different aspect ratios, e.g.: 1440 : 900 (16:10)
+###FullScreen (checkbox)
+#Account (Panel)
+###Remember account name/e-mail (checkbox)
+###Remember password (checkbox)
+#Sound? (maybe later)
