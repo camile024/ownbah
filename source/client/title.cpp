@@ -1,10 +1,6 @@
 /*
 TITLE SCREEN (logging in)
 Author: Kamil
-TODO: make items persistent, recreate only
-	if window has changed (so the scene doesn't
-	overwrite the button with "BTN_DOWN" state
-	if it's clicked).
 */
 #pragma once
 //standard includes
@@ -54,6 +50,17 @@ void init(){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glShadeModel(GL_SMOOTH);
+	freeTitleUIObjects(); //Free memory of UI items in case they already exist
+	ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
+	ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
+	ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Join game");
+	ui_host = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Host a server");
+	ui_options = new UI_Button(*ui_menu, 15, 100, windowSizeX / 5 * 3 - 30, 30, "Options");
+	ui_exit = new UI_Button(*ui_menu, 15, 145, windowSizeX / 5 * 3 - 30, 30, "Exit");
+	/*Set onClick actions*/
+	ui_play->setAction(login);
+	ui_options->setAction(options);
+	ui_exit->setAction(exit);
 	//glMatrixMode(GL_MODELVIEW);
 	
 }
@@ -76,17 +83,14 @@ static void display(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, windowSizeX, windowSizeY, 0, -1.0, 1.0);
-	/*Initialise resolution-adjusted items*/
-	if (ui_title == nullptr || windowChanged) {
-		freeTitleUIObjects(); //Free memory of UI items in case they already exist
-		ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
-		ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
-		ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Join game");
-		ui_play->setAction(login);
-		ui_host = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Host a server");
-		ui_options = new UI_Button(*ui_menu, 15, 100, windowSizeX / 5 * 3 - 30, 30, "Options");
-		ui_exit = new UI_Button(*ui_menu, 15, 145, windowSizeX / 5 * 3 - 30, 30, "Exit");
-		ui_exit->setAction(exit);
+	/*Resize resolution-adjusted items*/
+	if ( windowChanged) {
+		ui_title->setSizes(0, 0, windowSizeX, windowSizeY / 4);
+		ui_menu->setSizes(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
+		ui_play->setSizes(15, 10, windowSizeX / 5 * 3 - 30, 30);
+		ui_host->setSizes(15, 55, windowSizeX / 5 * 3 - 30, 30);
+		ui_options->setSizes(15, 100, windowSizeX / 5 * 3 - 30, 30);
+		ui_exit->setSizes(15, 145, windowSizeX / 5 * 3 - 30, 30);
 	}
 	
 	/*Do the actual drawing*/
@@ -158,6 +162,8 @@ void window(){
 *	Call this to display the title window
 */
 void titleCreate(){
+	//loadSettings();
+	//loadAccData(); //if settings store userAcc data
 	window();
 }
 
@@ -168,20 +174,25 @@ void mouseInput(int key, int state, int x, int y) {
 	if (key == GLUT_LEFT_BUTTON) {
 		/* The following piece of code iterates over all the nodes in "ui_menu" object 
 			and checks if they're within given X,Y coordinates. */
+
+		/* get nodes of the panel */
 		std::vector<UI_Node*>& nodes = ui_menu->getNodes();
+		/* iterate over said nodes */
 		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
+			/* check if the clicked area is within node's coordinates */
 			if (withinCoords(x, y, *i)) {
-				UI_Button * btn = dynamic_cast<UI_Button*>(*i);
-				if (btn != nullptr) {
-					if (state == GLUT_DOWN) {
+				/* button event handling*/
+				UI_Button * btn = dynamic_cast<UI_Button*>(*i); //dynamic cast node->button
+				if (btn != nullptr) { //if cast was successfull (meaning this indeed is a button)
+					if (state == GLUT_DOWN) { //if mouseDown
 						btn->setState(BTN_DOWN);
-					}
-					else {
+					} else if (btn->getState() == BTN_DOWN) { //if mouse released
 						btn->setState(BTN_ACTIVE);
 						btn->onClick();
 					}
 					printMsg(MSG_LOG, "Clicked a button.");
 				}
+				/* Insert any other GUI elements handling under this comment */
 			}
 		}
 	}
@@ -231,6 +242,10 @@ void doDrawing() {
 
 void login() {
 	printMsg(MSG_LOG, "Logging in...");
+}
+
+void options() {
+
 }
 
 /*

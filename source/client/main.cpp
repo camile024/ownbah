@@ -30,6 +30,9 @@ I am creating my own GUI classes (gui.h/gui.cpp) based on glut
 #include "main.h"
 #include "title.h"
 
+//game version
+#define GAME_VER 0.1
+
 //message types
 #define MSG_NORMAL	0
 #define	MSG_ERROR	1
@@ -45,6 +48,7 @@ int main(int argc, char* argv[]) {
 		enterDev(argc, argv);
 	}
 	printMsg(MSG_NORMAL, "Initialising game...");
+
 	return 0;
 }
 

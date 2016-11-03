@@ -21,6 +21,7 @@ void init(void);
 void window();
 void titleCreate();
 void doDrawing();
+void options();
 void login();
 void exit();
 bool reshapeWindow();
