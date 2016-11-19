@@ -1,9 +1,12 @@
 #pragma once
+//standard includes
 #include <iostream>
 #include <exception>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <Windows.h>
+
 
 #define MSG_NORMAL	0
 #define	MSG_ERROR	1

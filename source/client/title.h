@@ -11,21 +11,19 @@
 #include <gl\GL.h>
 #include <gl\GLU.h>
 #include <GL\glut.h>
+#include "gui/gui.h"
 
 //custom headers
 #include "clientDebug.h"
-#include "gui.h"
 
-void display(void);
-void init(void);
-void window();
+static void titleDisplay(void);
+static void init(void);
+static void window();
 void titleCreate();
-void doDrawing();
-void options();
-void login();
+static void options();
+static void login();
 void exit();
-bool reshapeWindow();
 bool withinCoords(int x, int y, UI_Node* a);
 void freeTitleUIObjects();
-void mouseInput(int key, int state, int x, int y);
-void mouseMove(int x, int y);
+static void mouseInput(int key, int state, int x, int y);
+static void mouseMove(int x, int y);

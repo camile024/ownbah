@@ -14,7 +14,7 @@
 #include <GL\glut.h>
 
 //custom headers
-#include "clientDebug.h"
+#include "../clientDebug.h"
 
 #define UI_MAX_NODES 50 //PER PANEL
 #define BTN_ACTIVE 0
@@ -22,13 +22,17 @@
 #define BTN_DISABLED 2
 #define BTN_HOVER 3
 
+#define COMBO_ACTIVE 0
+#define COMBO_OPEN 1
+#define COMBO_HOVER 4
+
 interface UI_Node;
 class UI_Panel;
 class UI_Button;
 
 
 
-
+bool reshapeWindow(int, int, int, int, int, int);
 
 /*
 *=========================================

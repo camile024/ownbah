@@ -17,16 +17,7 @@ I am creating my own GUI classes (gui.h/gui.cpp) based on glut
 */
 
 #pragma once
-//standard includes
-#include <iostream>
-#include <exception>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <Windows.h>
 
-//custom headers
-#include "clientDebug.h"
 #include "main.h"
 #include "title.h"
 
@@ -67,7 +58,7 @@ bool checkDebug(int argc, char* argv[]) {
 bool checkDev(int argc,char* argv[]) {
 	for (int i = 0; i < argc; i++) {
 		std::string arg(argv[i]);
-		if (arg == "dev4431") {
+		if (arg == "dev") {
 			return true;
 		}
 	}

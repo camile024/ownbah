@@ -3,23 +3,9 @@ TITLE SCREEN (logging in)
 Author: Kamil
 */
 #pragma once
-//standard includes
-#include <iostream>
-#include <exception>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <Windows.h>
 
-//graphics
-#include <gl\GL.h>
-#include <gl\GLU.h>
-#include <GL\glut.h>
-
-//custom headers
-#include "clientDebug.h"
-#include "gui.h"
 #include "title.h"
+#include "options.h"
 
 
 
@@ -42,11 +28,40 @@ static const int MAX_WINDOW_WIDTH = 500;
 static const int MAX_WINDOW_HEIGHT = 700;
 
 /*
+*	==========================
+*	==========================
+*	== NON-STATIC FUNCTIONS ==
+*	==========================
+*	==========================
+*/	
+
+/*
+*	Call this to display the title window for the
+*	first time (intiializes GLUT)
+*/
+void titleCreate() {
+	//loadSettings();
+	//loadAccData(); //if settings store userAcc data
+	window();
+}
+
+/*
+*	Goes back to the init window from a previous one
+*	(use instead of titleCreate() if titleCreate() has been called before)
+*/
+void titleInit() {
+	glutDisplayFunc(titleDisplay);
+	glutMouseFunc(mouseInput);
+	glutPassiveMotionFunc(mouseMove);
+	titleDisplay();
+}
+
+/*
 *	Initialising OpenGL inside Glut
 *	Author: Kamil
 */
-void init(){
-	glClearColor(0.0f/255, 0.0f/255, 0.0f/255, 0.0);
+static void init() {
+	glClearColor(0.0f / 255, 0.0f / 255, 0.0f / 255, 0.0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glShadeModel(GL_SMOOTH);
@@ -62,20 +77,21 @@ void init(){
 	ui_options->setAction(options);
 	ui_exit->setAction(exit);
 	//glMatrixMode(GL_MODELVIEW);
-	
+
 }
 
 /*
 *	All the drawing goes here
 *	Author: Kamil
 */
-static void display(void) {
+void titleDisplay(void) {
 	printMsg(MSG_LOG, "Scene redrawn.");
 	bool windowChanged = false;
 	/*	Get current window sizes and change them accordingly
-		If window sizes have changed, make sure to recreate objects accordingly
+	If window sizes have changed, make sure to recreate objects accordingly
 	*/
-	windowChanged = reshapeWindow();
+	windowChanged = reshapeWindow(windowSizeX, windowSizeY, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT,
+		MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT);
 	/*Clear the window*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/*Set the viewport and projection matrix accordingly*/
@@ -84,7 +100,7 @@ static void display(void) {
 	glLoadIdentity();
 	glOrtho(0, windowSizeX, windowSizeY, 0, -1.0, 1.0);
 	/*Resize resolution-adjusted items*/
-	if ( windowChanged) {
+	if (windowChanged) {
 		ui_title->setSizes(0, 0, windowSizeX, windowSizeY / 4);
 		ui_menu->setSizes(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
 		ui_play->setSizes(15, 10, windowSizeX / 5 * 3 - 30, 30);
@@ -92,7 +108,7 @@ static void display(void) {
 		ui_options->setSizes(15, 100, windowSizeX / 5 * 3 - 30, 30);
 		ui_exit->setSizes(15, 145, windowSizeX / 5 * 3 - 30, 30);
 	}
-	
+
 	/*Do the actual drawing*/
 	ui_title->setColorRGB(228, 151, 37, 170);
 	ui_menu->setColorRGB(255, 193, 100, 100);
@@ -102,37 +118,56 @@ static void display(void) {
 }
 
 
+/*
+*	Checks if 'x' and 'y' are within coordinates of 'a'
+*/
+bool withinCoords(int x, int y, UI_Node* a) {
+	int parentX = a->getParent().getX();
+	int parentY = a->getParent().getY();
+	int itemX = a->getX();
+	int itemY = a->getY();
+	int width = a->getWidth();
+	int height = a->getHeight();
+	return (
+		x > parentX + itemX && x < parentX + itemX + width &&
+		y > parentY + itemY && y < parentY + itemY + height
+		);
+}
+
+void options() {
+	optionsCreate();
+}
 
 /*
-*	Makes sure the window is within a reasonable size
-*	Lets the drawing function know if the sizes have changed
-*	since the last display() call
+*	Frees memory of all the UI objects (static globals with 'ui_' prefix)
 */
-bool reshapeWindow() {
-	if (windowSizeX != glutGet(GLUT_WINDOW_WIDTH)
-		|| windowSizeY != glutGet(GLUT_WINDOW_HEIGHT)) {
-		windowSizeX = glutGet(GLUT_WINDOW_WIDTH);
-		windowSizeY = glutGet(GLUT_WINDOW_HEIGHT);
-		if (windowSizeY < MIN_WINDOW_HEIGHT) {
-			glutReshapeWindow(windowSizeX, MIN_WINDOW_HEIGHT);
-		} else if (windowSizeY > MAX_WINDOW_HEIGHT) {
-			glutReshapeWindow(windowSizeX, MAX_WINDOW_HEIGHT);
-		}
-
-		if (windowSizeX < MIN_WINDOW_WIDTH) {
-			glutReshapeWindow(MIN_WINDOW_WIDTH, windowSizeY);
-		} else if (windowSizeX > MAX_WINDOW_WIDTH) {
-			glutReshapeWindow(MAX_WINDOW_WIDTH, windowSizeY);
-		}
-		return true;
-	}
-	return 0;
+void freeTitleUIObjects() {
+	free(ui_title);
+	free(ui_menu);
+	free(ui_play);
+	free(ui_options);
+	free(ui_host);
+	free(ui_exit);
 }
+
+void exit() {
+	exit(0);
+}
+
+
+
+/*
+*	==========================
+*	==========================
+*	==   STATIC FUNCTIONS   ==
+*	==========================
+*	==========================
+*/
 /*
 *	Initialising title window and glut
 *	Author: Kamil
 */
-void window(){
+static void window(){
 	/*Fake arguments to pass to glutInit()*/
 	int argc = 1;
 	char *argv[1];
@@ -146,31 +181,22 @@ void window(){
 	/*Create a reasonably sized window*/
 	glutInitWindowSize(windowSizeX, windowSizeY);
 	glutInitWindowPosition(screenX / 2.8, screenY / 2 - windowSizeY / 1.5);
-	glutCreateWindow("Title");
+	glutCreateWindow("The Risk");
 	init();
 	/*Redirect glut to specific functions*/
-	glutDisplayFunc(display);
+	glutDisplayFunc(titleDisplay);
 	glutMouseFunc(mouseInput);
 	glutPassiveMotionFunc(mouseMove);
-	display();
+	titleDisplay();
 	//glutIdleFunc(drawUI);
 	glutMainLoop();
 	
 }
 
 /*
-*	Call this to display the title window
-*/
-void titleCreate(){
-	//loadSettings();
-	//loadAccData(); //if settings store userAcc data
-	window();
-}
-
-/*
 *	Handles mouse input
 */
-void mouseInput(int key, int state, int x, int y) {
+static void mouseInput(int key, int state, int x, int y) {
 	if (key == GLUT_LEFT_BUTTON) {
 		/* The following piece of code iterates over all the nodes in "ui_menu" object 
 			and checks if they're within given X,Y coordinates. */
@@ -202,7 +228,7 @@ void mouseInput(int key, int state, int x, int y) {
 /*
 *	Handles moving the mouse and hovering over objects
 */
-void mouseMove(int x, int y) {
+static void mouseMove(int x, int y) {
 	std::vector<UI_Node*>& nodes = ui_menu->getNodes();
 	for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
 		UI_Button * btn = dynamic_cast<UI_Button*>(*i);
@@ -219,47 +245,7 @@ void mouseMove(int x, int y) {
 	glutPostRedisplay();
 }
 
-/*
-*	Checks if 'x' and 'y' are within coordinates of 'a'
-*/
-bool withinCoords(int x, int y, UI_Node* a) {
-	int parentX = a->getParent().getX();
-	int parentY = a->getParent().getY();
-	int itemX = a->getX();
-	int itemY = a->getY();
-	int width = a->getWidth();
-	int height = a->getHeight();
-	return (
-		x > parentX + itemX && x < parentX + itemX + width &&
-		y > parentY + itemY && y < parentY + itemY + height
-		);
-} 
-
-
-void doDrawing() {
-	
-}
-
-void login() {
+static void login() {
 	printMsg(MSG_LOG, "Logging in...");
 }
 
-void options() {
-
-}
-
-/*
-*	Frees memory of all the UI objects (static globals with 'ui_' prefix)
-*/
-void freeTitleUIObjects() {
-	free(ui_title);
-	free(ui_menu);
-	free(ui_play);
-	free(ui_options);
-	free(ui_host);
-	free(ui_exit);
-}
-
-void exit() {
-	exit(0);
-}
