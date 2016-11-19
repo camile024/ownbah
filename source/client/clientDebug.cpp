@@ -3,13 +3,9 @@ CLIENT DEBUGGING MODULE
 Author: Kamil
 */
 #pragma once
-#include <iostream>
-#include <exception>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
 
 #include "title.h"
+#include "options.h"
 #include "clientDebug.h"
 
 //message types
