@@ -10,8 +10,7 @@ upgrade it'll look something like (S_ obligatory in case of constant strings):
 S_UPGRADE1_DESCRIPTION = "...";  
 S_MAINMENU_BUTTON1_CAPTION = "Join game";  
 ##Variables
--Initialise when declaring  
--Static variables are **not allowed**  
+-Initialise when declaring
 -Use g_name for global variables
 ##Files
 -Use lowercase only (unless really required) with underscores  
