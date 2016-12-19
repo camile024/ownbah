@@ -16,8 +16,13 @@
 //custom headers
 #include "clientDebug.h"
 
+namespace options {
+	void show();
+	void freeUI();
+}
+
 static void init();
-void optionsDisplay(void);
-static void window();
-void optionsCreate();
-void freeOptionsUIObjects();
+static void display(void);
+static void mouseInput(int key, int state, int x, int y);
+static void mouseMove(int x, int y);
+static void cancel(void);

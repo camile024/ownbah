@@ -84,7 +84,7 @@ void cmd_help() {
 }
 
 void cmd_title() {
-	titleCreate();
+	title::create();
 }
 
 void cmd_argst(std::string *arguments) {
