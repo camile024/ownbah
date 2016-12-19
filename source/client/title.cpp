@@ -52,6 +52,7 @@ namespace title {
 	*	(use instead of title::Create() if title::Create() has been called before)
 	*/
 	void show() {
+		glutSetWindowTitle("The Risk");
 		windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
 		windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 4 + 200;
 		glutReshapeWindow(windowSizeX, windowSizeY);
@@ -182,6 +183,11 @@ static void window(){
 	glutInitWindowPosition(screenX / 2.8, screenY / 2 - windowSizeY / 1.5);
 	glutCreateWindow("The Risk");
 	init();
+	/* Anti-aliasing for drawing lines */
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	/*Redirect glut to specific functions*/
 	glutDisplayFunc(display);
 	glutMouseFunc(mouseInput);

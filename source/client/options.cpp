@@ -13,6 +13,7 @@ Author: Kamil
 *	WINDOW GLOBALS
 *
 */
+static bool windowActive = true;
 static int windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
 static int windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 4 + 200;
 static UI_Panel *ui_settings; //settings panel
@@ -22,7 +23,7 @@ static UI_Panel *ui_account; //account settings panel
 static UI_Button *ui_save; //saves options into the file, applies to variables
 static UI_Button *ui_cancel; //cancels changes made
 //static UI_Combobox *ui_resolutions;
-//static UI_Checkbox *ui_fullscreen;
+static UI_Checkbox *ui_fullscreen;
 //static UI_Checkbox *ui_saveUsername;
 //static UI_Checkbox *ui_savePassword;
 static const int MIN_WINDOW_WIDTH = 350;
@@ -50,6 +51,7 @@ namespace options {
 	void show() {
 		//loadSettings();
 		//loadAccData(); //if settings store userAcc data
+		glutSetWindowTitle("Settings");
 		windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
 		windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 4 + 200;
 		glutReshapeWindow(windowSizeX, windowSizeY);
@@ -66,6 +68,8 @@ namespace options {
 	void freeUI() {
 		delete ui_window;
 		delete ui_account;
+		delete ui_settings;
+		delete ui_buttons;
 		delete ui_save;
 		delete ui_cancel;
 
@@ -132,18 +136,27 @@ static void init() {
 	glEnable(GL_BLEND);
 	glShadeModel(GL_SMOOTH);
 	options::freeUI(); //Free memory of UI items in case they already exist
+	/* Main Panel */
 	ui_settings = new UI_Panel(0, 0, windowSizeX, windowSizeY);
+	/* Window Settings */
 	ui_window = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4 * 2);
+	ui_fullscreen = new UI_Checkbox(*ui_window, 15, 10, windowSizeX / 9 * 3.5, 30, "Full Screen");
+	/* Account Settings */
 	ui_account = new UI_Panel(0, windowSizeY / 4 * 2, windowSizeX, windowSizeY / 4);
+	/* Bottom Buttons */
 	ui_buttons = new UI_Panel(0, windowSizeY / 4 * 3, windowSizeX, windowSizeY / 4);
 	ui_save = new UI_Button(*ui_buttons, 15, 10, windowSizeX / 9 * 3, 30, "Save");
 	ui_cancel = new UI_Button(*ui_buttons, 15 + windowSizeX / 2, 10, windowSizeX / 9 * 3, 30, "Cancel");
-	/*Set onClick actions*/
-	//ui_play->setAction(login);
-	//ui_options->setAction(options);
-	ui_cancel->setAction(cancel);
-	//glMatrixMode(GL_MODELVIEW);
 
+	/* Panel styles */
+	ui_settings->setStyle(STYLE_NORMAL);
+	ui_window->setStyle(STYLE_NORMAL);
+	ui_account->setStyle(STYLE_NORMAL);
+	ui_buttons->setStyle(STYLE_NORMAL);
+	ui_buttons->addFlag(STYLEFLAG_OUTLINE);
+
+	/* Set onClick actions */
+	ui_cancel->setAction(cancel);
 }
 
 
@@ -151,27 +164,47 @@ static void init() {
 *	Handles mouse input
 */
 static void mouseInput(int key, int state, int x, int y) {
-	if (key == GLUT_LEFT_BUTTON) {
+	if (key == GLUT_LEFT_BUTTON && windowActive) {
 		/* The following piece of code iterates over all the nodes in "ui_menu" object
 		and checks if they're within given X,Y coordinates. */
 
-		/* get nodes of the panel */
-		std::vector<UI_Node*>& nodes = ui_buttons->getNodes();
+		/* get nodes of all panels */
+		std::vector<UI_Node*>& nodes1 = ui_buttons->getNodes();
+		std::vector<UI_Node*>& nodes2 = ui_window->getNodes();
+		
+		std::vector<UI_Node*> nodes;
+		nodes.reserve(nodes1.size() + nodes2.size());
+		nodes.insert(nodes.end(), nodes1.begin(), nodes1.end());
+		nodes.insert(nodes.end(), nodes2.begin(), nodes2.end());
 		/* iterate over said nodes */
 		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
 			/* check if the clicked area is within node's coordinates */
 			if (withinCoords(x, y, *i)) {
-				/* button event handling*/
-				UI_Button * btn = dynamic_cast<UI_Button*>(*i); //dynamic cast node->button
-				if (btn != nullptr) { //if cast was successfull (meaning this indeed is a button)
-					if (state == GLUT_DOWN) { //if mouseDown
-						btn->setState(BTN_DOWN);
+				if ((*i)->getName() == "Button") {
+					/* button event handling*/
+					UI_Button * btn = dynamic_cast<UI_Button*>(*i); //dynamic cast node->button
+					if (btn != nullptr) { //if cast was successfull (meaning this indeed is a button)
+						if (state == GLUT_DOWN) { //if mouseDown
+							btn->setState(BTN_DOWN);
+						}
+						else if (btn->getState() == BTN_DOWN) { //if mouse released
+							btn->setState(BTN_ACTIVE);
+							btn->onClick();
+						}
 					}
-					else if (btn->getState() == BTN_DOWN) { //if mouse released
-						btn->setState(BTN_ACTIVE);
-						btn->onClick();
+				} else if ((*i)->getName() == "Checkbox") {
+
+					/* checkbox event handling*/
+					UI_Checkbox * chk = dynamic_cast<UI_Checkbox*>(*i); //dynamic cast node->checkbox
+					if (chk != nullptr) { //if cast was successfull (meaning this indeed is a button)
+						if (state == GLUT_DOWN) { //if mouseDown
+							chk->setState(BTN_DOWN);
+						}
+						else if (chk->getState() == BTN_DOWN) { //if mouse released
+							chk->setState(BTN_ACTIVE);
+							chk->toggle();
+						}
 					}
-					printMsg(MSG_LOG, "Clicked a button.");
 				}
 				/* Insert any other GUI elements handling under this comment */
 			}
@@ -184,23 +217,47 @@ static void mouseInput(int key, int state, int x, int y) {
 *	Handles moving the mouse and hovering over objects
 */
 static void mouseMove(int x, int y) {
-	std::vector<UI_Node*>& nodes = ui_buttons->getNodes();
-	if (nodes.size() > 0) {
+	if (windowActive) {
+		/* Get nodes of all panels */
+		std::vector<UI_Node*>& nodes1 = ui_buttons->getNodes();
+		std::vector<UI_Node*>& nodes2 = ui_window->getNodes();
+
+		std::vector<UI_Node*> nodes;
+		nodes.reserve(nodes1.size() + nodes2.size());
+		nodes.insert(nodes.end(), nodes1.begin(), nodes1.end());
+		nodes.insert(nodes.end(), nodes2.begin(), nodes2.end());
+		/* Iterate over nodes */
 		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
-			UI_Button * btn = dynamic_cast<UI_Button*>(*i);
-			if (btn != nullptr) {
-				if (withinCoords(x, y, *i)) {
-					btn->setState(BTN_HOVER);
+			if ((*i)->getName() == "Button") {
+				/* Button cast */
+				UI_Button * btn = dynamic_cast<UI_Button*>(*i);
+				if (btn != nullptr) {
+					if (withinCoords(x, y, *i)) {
+						btn->setState(BTN_HOVER);
+					}
+					else {
+						if (btn->getState() != BTN_DISABLED) {
+							btn->setState(BTN_ACTIVE);
+						}
+					}
 				}
-				else {
-					if (btn->getState() != BTN_DISABLED) {
-						btn->setState(BTN_ACTIVE);
+			} else if ((*i)->getName() == "Checkbox") {
+				/* Checkbox cast */
+				UI_Checkbox * chk = dynamic_cast<UI_Checkbox*>(*i);
+				if (chk != nullptr) {
+					if (withinCoords(x, y, *i)) {
+						chk->setState(BTN_HOVER);
+					}
+					else {
+						if (chk->getState() != BTN_DISABLED) {
+							chk->setState(BTN_ACTIVE);
+						}
 					}
 				}
 			}
 		}
+		glutPostRedisplay();
 	}
-	glutPostRedisplay();
 }
 
 /*

@@ -20,13 +20,19 @@ class UI_Checkbox : public UI_Node {
 	UI_Panel &parent;
 	byte state = BTN_ACTIVE;
 	std::string name = "Checkbox";
+	struct {
+		float r = 1.00f;
+		float g = 1.00f;
+		float b = 1.00f;
+	} color;
 public:
 	void setState(byte);
 	byte getState();
 	void onClick();
 	void setAction(void(*)());
 	void draw();
-	UI_Panel& getParent() { return parent; }
+	std::string getName(void) { return name; };
+	UI_Panel& getParent() { return parent; };
 	UI_Checkbox(UI_Panel&, float, float, float, float, std::string);
 	void toggle();
 };

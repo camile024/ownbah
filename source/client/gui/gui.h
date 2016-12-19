@@ -7,6 +7,7 @@
 #include <string>
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 
 //graphics
 #include <gl\GL.h>

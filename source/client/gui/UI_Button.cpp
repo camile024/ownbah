@@ -114,8 +114,7 @@ void UI_Button::draw() {
 	glColor4f(0, 0, 0, 1);
 	if (state == BTN_DOWN) {
 		glColor4f(1, 1, 1, 1);
-	}
-	else if (state == BTN_HOVER) {
+	} else if (state == BTN_HOVER) {
 		glColor4f(1, 0, 0, 1);
 		state = BTN_ACTIVE; //sets state back in case mouse goes out of range
 	}

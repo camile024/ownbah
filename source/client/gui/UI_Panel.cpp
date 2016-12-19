@@ -16,6 +16,20 @@ UI_Panel::UI_Panel(float x, float y, float x2, float y2) {
 	posY = y;
 	width = x2;
 	height = y2;
+	style = STYLE_ROUND;
+	flags = 0;
+}
+
+void UI_Panel::addFlag(int flag) {
+	flags |= flag;
+}
+
+void UI_Panel::removeFlag(int flag) {
+	flags |= ~flag;
+}
+
+bool UI_Panel::checkFlag(int flag) {
+	return ((flag & flags) == flag);
 }
 
 /*
@@ -24,35 +38,51 @@ UI_Panel::UI_Panel(float x, float y, float x2, float y2) {
 void UI_Panel::draw() {
 	/*Draws the panel itself*/
 	float cornerOffset = 5;
-	float varray[] = {
-		posX, posY + cornerOffset, 0,
-		posX + cornerOffset, posY, 0,
-		posX + width - cornerOffset, posY, 0,
-		posX + width, posY + cornerOffset, 0,
-		posX + width, posY + height - cornerOffset, 0,
-		posX + width - cornerOffset, posY + height, 0,
-		posX + cornerOffset, posY + height, 0,
-		posX, posY + height - cornerOffset, 0,
-	};
+	float varray[30];
+	int count;
+	switch (style) {
+		case STYLE_ROUND: 
+		{
+			float temp[] = {
+				posX, posY + cornerOffset, 0,
+				posX + cornerOffset, posY, 0,
+				posX + width - cornerOffset, posY, 0,
+				posX + width, posY + cornerOffset, 0,
+				posX + width, posY + height - cornerOffset, 0,
+				posX + width - cornerOffset, posY + height, 0,
+				posX + cornerOffset, posY + height, 0,
+				posX, posY + height - cornerOffset, 0,
+			};
+			count = 8;
+			std::copy(temp, temp + sizeof(temp) / sizeof(temp[0]), varray);
+		}
+		break;
+		case STYLE_NORMAL:
+		{
+			float temp2[] = {
+				posX, posY, 0,
+				posX + width, posY, 0,
+				posX + width, posY + height, 0,
+				posX, posY + height, 0,
+			};
+			count = 4;
+			std::copy(temp2, temp2 + sizeof(temp2) / sizeof(temp2[0]), varray);
+		}
+		break;
+
+	}
+	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, varray);
 	glColor4f(color.r, color.g, color.b, color.a);
-	glDrawArrays(GL_POLYGON, 0, 8);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	/*glBegin(GL_QUADS);
-	{
-	glColor4f(color.r, color.g, color.b, color.a);
-	glVertex3f(posX, posY, 0);
-	//printMsg(MSG_LOG, "Added point at " + std::to_string(posX) + ", " + std::to_string(posY));
-	glVertex3f(posX + width, posY, 0);
-	//printMsg(MSG_LOG, "Added point at " + std::to_string(posX + width) + ", " + std::to_string(posY));
-	glVertex3f(posX + width, posY + height, 0);
-	//printMsg(MSG_LOG, "Added point at " + std::to_string(posX + width) + ", " + std::to_string(posY + height));
-	glVertex3f(posX, posY + height, 0);
-	//printMsg(MSG_LOG, "Added point at " + std::to_string(posX) + ", " + std::to_string(posY + height));
+	glDrawArrays(GL_POLYGON, 0, count);
+	if (checkFlag(STYLEFLAG_OUTLINE)) {
+		glDrawArrays(GL_LINE_LOOP, 0, count);
+		glColor4f(0, 0, 0, 0);
 	}
-	glEnd();*/
-	//
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	/* Draw the nodes inside panel */
 	for (UI_Node* x : nodes) {
 		x->draw();
 	}

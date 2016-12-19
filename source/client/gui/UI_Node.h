@@ -23,7 +23,7 @@ protected:
 	std::string name = "";
 public:
 	virtual void draw(void) = 0;
-	std::string getName() { return name; }
+	virtual std::string getName() { return name; }
 	float getX() { return posX; }
 	float getY() { return posY; }
 	float getWidth() { return width; }

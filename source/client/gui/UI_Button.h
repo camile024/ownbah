@@ -32,6 +32,7 @@ public:
 	void draw();
 	void setColor(float, float, float);
 	void setColorRGB(int, int, int);
+	std::string getName(void) { return name; };
 	UI_Panel& getParent() { return parent; }
 	UI_Button(UI_Panel&, float, float, float, float, std::string);
 };
