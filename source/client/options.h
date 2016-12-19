@@ -12,6 +12,8 @@
 #include <gl\GLU.h>
 #include <GL\glut.h>
 #include "gui/gui.h"
+#include "gui/UI_Checkbox.h"
+#include "gui/UI_Combobox.h"
 
 //custom headers
 #include "clientDebug.h"

@@ -66,6 +66,7 @@ void UI_Checkbox::draw() {
 	float x = posX + parent.getX();
 	float y = parent.getY() + posY;
 	float cornerOffset = 5.0f;
+	float boxWidth = 15;
 	float arrOut[] = {
 		posX, posY + cornerOffset, 0,
 		posX + cornerOffset, posY, 0,
@@ -79,9 +80,14 @@ void UI_Checkbox::draw() {
 
 	float arrBox[] = {
 		posX + width / 16, posY + height / 5, 0,
-		posX + width / 16 * 2, posY + height / 5, 0,
-		posX + width / 16 * 2, posY + height / 5 * 4, 0,
-		posX + width / 16, posY + height / 5 * 4, 0,
+		posX + width / 16 + boxWidth, posY + height / 5, 0,
+		posX + width / 16 + boxWidth, posY + height / 5 + boxWidth, 0,
+		posX + width / 16, posY + height / 5 + boxWidth, 0,
+	};
+	float arrTick[] = {
+		posX + width / 16, posY + height / 5 + boxWidth / 4, 0,
+		posX + width / 16 + boxWidth / 2, posY + height / 5 + boxWidth, 0,
+		posX + width / 16 + boxWidth, posY + height / 5 , 0,
 	};
 	/* Start doing the array drawing for the button body */
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -89,32 +95,49 @@ void UI_Checkbox::draw() {
 	switch (state) {
 	case BTN_HOVER:
 	case BTN_ACTIVE:
-		glColor4f(0, 0, 0, 255);
+		glColor4f(color.r, color.g, color.b, 255);
 		break;
 	case BTN_DOWN:
-		glColor4f(0.5, 0.5, 0.5, 255);
+		glColor4f(color.r / 2, color.g / 2, color.b / 2, 100);
 		break;
 	case BTN_DISABLED:
-		glColor4f(0.5, 0.5, 0.5, 170);
+		glColor4f(color.r, color.g, color.b, 170);
 		break;
 	}
-	/* Draw the outline */
+	/* Draw the body+outline */
 	glVertexPointer(3, GL_FLOAT, 0, arrOut);
-	glDrawArrays(GL_POLYGON, 0, 6);
+	glDrawArrays(GL_POLYGON, 0, 8);
+	if (state == BTN_HOVER)
+		glColor4f(1, 0, 0, 1);
+	else
+		glColor4f(0, 0, 0, 1);
+	glDrawArrays(GL_LINE_LOOP, 0, 8);
+	/* ---Draw the box + outline ---*/
+	glVertexPointer(3, GL_FLOAT, 0, arrBox);
 
-	/* ---Draw the box ---*/
-	glLineWidth(1);
-	glColor4f(0, 0, 0, 1);
 	if (state == BTN_DOWN) {
+		glColor4f(0.5, 0.5, 0.5, 1);
+	} else {
 		glColor4f(1, 1, 1, 1);
 	}
-	else if (state == BTN_HOVER) {
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glLineWidth(1.5);
+	if (state == BTN_HOVER) {
 		glColor4f(1, 0, 0, 1);
-		state = BTN_ACTIVE; //sets state back in case mouse goes out of range
+		state = BTN_ACTIVE;
+	} else {
+		glColor4f(0, 0, 0, 1);
 	}
-	glDrawArrays(GL_LINE_LOOP, 0, 6);
+	glDrawArrays(GL_LINE_LOOP, 0, 4);
+	/* ---Draw the tick--- */
+	if (checked) {
+		glLineWidth(2);
+		glVertexPointer(3, GL_FLOAT, 0, arrTick);
+		glDrawArrays(GL_LINE_STRIP, 0, 3);
+	}
 
 	/* ---Draw text---*/
-	drawString(GLUT_BITMAP_HELVETICA_18, caption, x + width / 15, y + 20);
+	drawString(GLUT_BITMAP_HELVETICA_18, caption, x + width / 15 + boxWidth + 5, y + 20);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }

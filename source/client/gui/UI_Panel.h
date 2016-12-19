@@ -18,6 +18,8 @@ protected:
 	float posY;
 	float width;
 	float height;
+	int style;
+	int flags;
 	std::vector<UI_Node*> nodes;
 	std::string name = "Panel";
 	struct {
@@ -33,11 +35,15 @@ public:
 	float getY() { return posY; }
 	float getWidth() { return width; }
 	float getHeight() { return height; }
+	bool checkFlag(int);
 	void setColor(float, float, float, float);
 	void setColorRGB(int, int, int, int);
 	void addNode(UI_Node&);
 	void removeNode(UI_Node&);
 	void draw();
+	void addFlag(int);
+	void removeFlag(int);
+	void setStyle(int x) { style = x; };
 	void setSizes(float x, float y, float width, float height);
 	std::vector<UI_Node*>& getNodes();
 };
