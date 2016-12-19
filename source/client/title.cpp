@@ -26,6 +26,7 @@ static const int MIN_WINDOW_WIDTH = 350;
 static const int MIN_WINDOW_HEIGHT = 400;
 static const int MAX_WINDOW_WIDTH = 500;
 static const int MAX_WINDOW_HEIGHT = 700;
+using namespace title;
 
 /*
 *	==========================
@@ -35,56 +36,66 @@ static const int MAX_WINDOW_HEIGHT = 700;
 *	==========================
 */	
 
-/*
-*	Call this to display the title window for the
-*	first time (intiializes GLUT)
-*/
-void titleCreate() {
-	//loadSettings();
-	//loadAccData(); //if settings store userAcc data
-	window();
+namespace title {
+	/*
+	*	Call this to display the title window for the
+	*	first time (intiializes GLUT)
+	*/
+	void create() {
+		//loadSettings();
+		//loadAccData(); //if settings store userAcc data
+		window();
+	}
+
+	/*
+	*	Goes back to the init window from a previous one
+	*	(use instead of title::Create() if title::Create() has been called before)
+	*/
+	void show() {
+		windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
+		windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 4 + 200;
+		glutReshapeWindow(windowSizeX, windowSizeY);
+		init();
+		//options::freeUI();
+		glutDisplayFunc(display);
+		glutMouseFunc(mouseInput);
+		glutPassiveMotionFunc(mouseMove);
+		display();
+	}
+
+
+	/*
+	*	Frees memory of all the UI objects (static globals with 'ui_' prefix)
+	*/
+	void freeUI() {
+		delete ui_title;
+		delete ui_menu;
+		delete ui_play;
+		delete ui_options;
+		delete ui_host;
+		delete ui_exit;
+	}
 }
 
-/*
-*	Goes back to the init window from a previous one
-*	(use instead of titleCreate() if titleCreate() has been called before)
-*/
-void titleInit() {
-	glutDisplayFunc(titleDisplay);
-	glutMouseFunc(mouseInput);
-	glutPassiveMotionFunc(mouseMove);
-	titleDisplay();
+void exit() {
+	exit(0);
 }
 
-/*
-*	Initialising OpenGL inside Glut
-*	Author: Kamil
-*/
-static void init() {
-	glClearColor(0.0f / 255, 0.0f / 255, 0.0f / 255, 0.0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
-	freeTitleUIObjects(); //Free memory of UI items in case they already exist
-	ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
-	ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
-	ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Join game");
-	ui_host = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Host a server");
-	ui_options = new UI_Button(*ui_menu, 15, 100, windowSizeX / 5 * 3 - 30, 30, "Options");
-	ui_exit = new UI_Button(*ui_menu, 15, 145, windowSizeX / 5 * 3 - 30, 30, "Exit");
-	/*Set onClick actions*/
-	ui_play->setAction(login);
-	ui_options->setAction(options);
-	ui_exit->setAction(exit);
-	//glMatrixMode(GL_MODELVIEW);
 
-}
+
+/*
+*	==========================
+*	==========================
+*	==   STATIC FUNCTIONS   ==
+*	==========================
+*	==========================
+*/
 
 /*
 *	All the drawing goes here
 *	Author: Kamil
 */
-void titleDisplay(void) {
+static void display() {
 	printMsg(MSG_LOG, "Scene redrawn.");
 	bool windowChanged = false;
 	/*	Get current window sizes and change them accordingly
@@ -118,51 +129,39 @@ void titleDisplay(void) {
 }
 
 
-/*
-*	Checks if 'x' and 'y' are within coordinates of 'a'
-*/
-bool withinCoords(int x, int y, UI_Node* a) {
-	int parentX = a->getParent().getX();
-	int parentY = a->getParent().getY();
-	int itemX = a->getX();
-	int itemY = a->getY();
-	int width = a->getWidth();
-	int height = a->getHeight();
-	return (
-		x > parentX + itemX && x < parentX + itemX + width &&
-		y > parentY + itemY && y < parentY + itemY + height
-		);
-}
-
-void options() {
-	optionsCreate();
+static void settings() {
+	//glutDisplayFunc(NULL);
+	glutMouseFunc(NULL);
+	glutPassiveMotionFunc(NULL);
+	//title::freeUI();
+	options::show();
 }
 
 /*
-*	Frees memory of all the UI objects (static globals with 'ui_' prefix)
+*	Initialising OpenGL inside Glut
+*	Author: Kamil
 */
-void freeTitleUIObjects() {
-	free(ui_title);
-	free(ui_menu);
-	free(ui_play);
-	free(ui_options);
-	free(ui_host);
-	free(ui_exit);
+static void init() {
+	glClearColor(0.0f / 255, 0.0f / 255, 0.0f / 255, 0.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glShadeModel(GL_SMOOTH);
+	title::freeUI(); //Free memory of UI items in case they already exist
+	ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
+	ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
+	ui_play = new UI_Button(*ui_menu, 15, 10, windowSizeX / 5 * 3 - 30, 30, "Join game");
+	ui_host = new UI_Button(*ui_menu, 15, 55, windowSizeX / 5 * 3 - 30, 30, "Host a server");
+	ui_options = new UI_Button(*ui_menu, 15, 100, windowSizeX / 5 * 3 - 30, 30, "Options");
+	ui_exit = new UI_Button(*ui_menu, 15, 145, windowSizeX / 5 * 3 - 30, 30, "Exit");
+	/*Set onClick actions*/
+	ui_play->setAction(login);
+	ui_options->setAction(settings);
+	ui_exit->setAction(exit);
+	//glMatrixMode(GL_MODELVIEW);
+
 }
 
-void exit() {
-	exit(0);
-}
 
-
-
-/*
-*	==========================
-*	==========================
-*	==   STATIC FUNCTIONS   ==
-*	==========================
-*	==========================
-*/
 /*
 *	Initialising title window and glut
 *	Author: Kamil
@@ -184,10 +183,10 @@ static void window(){
 	glutCreateWindow("The Risk");
 	init();
 	/*Redirect glut to specific functions*/
-	glutDisplayFunc(titleDisplay);
+	glutDisplayFunc(display);
 	glutMouseFunc(mouseInput);
 	glutPassiveMotionFunc(mouseMove);
-	titleDisplay();
+	display();
 	//glutIdleFunc(drawUI);
 	glutMainLoop();
 	
@@ -204,21 +203,24 @@ static void mouseInput(int key, int state, int x, int y) {
 		/* get nodes of the panel */
 		std::vector<UI_Node*>& nodes = ui_menu->getNodes();
 		/* iterate over said nodes */
-		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
-			/* check if the clicked area is within node's coordinates */
-			if (withinCoords(x, y, *i)) {
-				/* button event handling*/
-				UI_Button * btn = dynamic_cast<UI_Button*>(*i); //dynamic cast node->button
-				if (btn != nullptr) { //if cast was successfull (meaning this indeed is a button)
-					if (state == GLUT_DOWN) { //if mouseDown
-						btn->setState(BTN_DOWN);
-					} else if (btn->getState() == BTN_DOWN) { //if mouse released
-						btn->setState(BTN_ACTIVE);
-						btn->onClick();
+		if (nodes.size() > 0) {
+			for (auto i = nodes.begin(); i != nodes.end(); ++i) {
+				/* check if the clicked area is within node's coordinates */
+				if (withinCoords(x, y, *i)) {
+					/* button event handling*/
+					UI_Button * btn = dynamic_cast<UI_Button*>(*i); //dynamic cast node->button
+					if (btn != nullptr) { //if cast was successfull (meaning this indeed is a button)
+						if (state == GLUT_DOWN) { //if mouseDown
+							btn->setState(BTN_DOWN);
+						}
+						else if (btn->getState() == BTN_DOWN) { //if mouse released
+							btn->setState(BTN_ACTIVE);
+							btn->onClick();
+						}
+						printMsg(MSG_LOG, "Clicked a button.");
 					}
-					printMsg(MSG_LOG, "Clicked a button.");
+					/* Insert any other GUI elements handling under this comment */
 				}
-				/* Insert any other GUI elements handling under this comment */
 			}
 		}
 	}
@@ -230,14 +232,17 @@ static void mouseInput(int key, int state, int x, int y) {
 */
 static void mouseMove(int x, int y) {
 	std::vector<UI_Node*>& nodes = ui_menu->getNodes();
-	for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
-		UI_Button * btn = dynamic_cast<UI_Button*>(*i);
-		if (btn != nullptr) {
-			if (withinCoords(x, y, *i)){
-				btn->setState(BTN_HOVER);
-			} else {
-				if (btn->getState() != BTN_DISABLED) {
-					btn->setState(BTN_ACTIVE);
+	if (nodes.size() > 0){
+		for (std::vector<UI_Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i) {
+			UI_Button * btn = dynamic_cast<UI_Button*>(*i);
+			if (btn != nullptr) {
+				if (withinCoords(x, y, *i)) {
+					btn->setState(BTN_HOVER);
+				}
+				else {
+					if (btn->getState() != BTN_DISABLED) {
+						btn->setState(BTN_ACTIVE);
+					}
 				}
 			}
 		}
