@@ -24,8 +24,8 @@
 
 bool reshapeWindow(int&, int&, int, int, int, int);
 void drawString(void *font, std::string msg, float x, float y);
-
-
+void drawCircle(float cx, float cy, float r, int num_segments);
+void drawFilledCircle(float cx, float cy, float r, int num_segments);
 
 
 
