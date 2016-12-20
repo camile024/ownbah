@@ -1,4 +1,4 @@
-#include "UI_Checkbox.h"
+#include "UI_RadioButton.h"
 /*
 
 ==============
@@ -10,57 +10,66 @@
 /*
 *	Same constructor as in a button
 */
-UI_Checkbox::UI_Checkbox(UI_Panel &pan, float x, float y, float width, float height, std::string caption) : parent(pan) {
+UI_RadioButton::UI_RadioButton(UI_Panel &pan, float x, float y, float width, float height, std::string caption) : parent(pan) {
 	posX = x;
 	posY = y;
 	this->width = width;
 	this->height = height;
 	this->caption = caption;
+	group = 0;
 	pan.addNode(*this);
 }
 
 /*
-*	Returns current checkbox state
+*	Returns current radiobutton state
 */
-byte UI_Checkbox::getState() {
+byte UI_RadioButton::getState() {
 	return state;
 }
 
 /*
-*	Sets the state for the checkbox (same states as for buttons)
+*	Sets the state for the radiobutton (same states as for buttons)
 */
-void UI_Checkbox::setState(byte state) {
+void UI_RadioButton::setState(byte state) {
 	this->state = state;
 }
 
 /*
 *	Does the onClick event
 */
-void UI_Checkbox::onClick() {
-	this->toggle();
+void UI_RadioButton::onClick() {
+	this->check();
 	if (action != nullptr) {
 		action();
 	}
 }
 
 /*
-*	Sets the event for the checkbox click
+*	Sets the event for the radiobutton click
 */
-void UI_Checkbox::setAction(void(*func)()) {
+void UI_RadioButton::setAction(void(*func)()) {
 	action = func;
 }
 
 /*
-*	Toggles the checkbox state
+*	Checks the radiobutton
 */
-void UI_Checkbox::toggle() {
-	checked = !checked;
+void UI_RadioButton::check() {
+	checked = true;
+}
+
+/*
+*	Unchecks the radiobutton
+*/
+void UI_RadioButton::unCheck() {
+	checked = false;
 }
 
 /*
 *	Draws the checkbox
+*	(UNTESTED) + UNFINISHED
 */
-void UI_Checkbox::draw() {
+void UI_RadioButton::draw() {
 	/* Arrays with coordinates*/
 	float x = posX + parent.getX();
 	float y = parent.getY() + posY;
@@ -111,29 +120,31 @@ void UI_Checkbox::draw() {
 	else
 		glColor4f(0, 0, 0, 1);
 	glDrawArrays(GL_LINE_LOOP, 0, 8);
-	/* ---Draw the box + outline ---*/
+	/* ---Draw the circle + outline ---*/
 	glVertexPointer(3, GL_FLOAT, 0, arrBox);
 
 	if (state == BTN_DOWN) {
 		glColor4f(0.5, 0.5, 0.5, 1);
-	} else {
+	}
+	else {
 		glColor4f(1, 1, 1, 1);
 	}
-	glDrawArrays(GL_POLYGON, 0, 4);
+	
+	drawFilledCircle(x + 18, y + 14, 7, 300);
 
 	glLineWidth(1.5);
 	if (state == BTN_HOVER) {
 		glColor4f(1, 0, 0, 1);
 		state = BTN_ACTIVE;
-	} else {
+	}
+	else {
 		glColor4f(0, 0, 0, 1);
 	}
-	glDrawArrays(GL_LINE_LOOP, 0, 4);
+	drawCircle(x + 18, y + 14, 7, 300);
 	/* ---Draw the tick--- */
 	if (checked) {
 		glLineWidth(2);
-		glVertexPointer(3, GL_FLOAT, 0, arrTick);
-		glDrawArrays(GL_LINE_STRIP, 0, 3);
+		drawFilledCircle(x + 18, y + 14, 5, 300);
 	}
 
 	/* ---Draw text---*/
