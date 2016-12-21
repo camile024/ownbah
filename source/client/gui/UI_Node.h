@@ -36,7 +36,7 @@ public:
 			&& this->height == node.height
 			&& this->name == node.name);
 	}
-	void setSizes(float x, float y, float width, float height);
+	virtual void setSizes(float x, float y, float width, float height);
 };
 
 /* WithinCoords function for use in mouse handling functions */

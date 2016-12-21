@@ -27,6 +27,7 @@ public:
 	void setColor(float, float, float);
 	void setColorRGB(int, int, int);
 	void setFont(void*);
+	void setSizes(float, float);
 	std::string getName(void) { return name; };
 	UI_Panel& getParent() { return parent; }
 	UI_Label(UI_Panel&, float, float, std::string);

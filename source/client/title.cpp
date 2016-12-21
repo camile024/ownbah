@@ -5,7 +5,7 @@ Author: Kamil
 #pragma once
 
 #include "title.h"
-#include "options.h"
+
 
 
 
@@ -14,8 +14,8 @@ Author: Kamil
 *	WINDOW GLOBALS
 *
 */
-static int windowSizeX = GetSystemMetrics(SM_CXSCREEN)/5;
-static int windowSizeY = GetSystemMetrics(SM_CYSCREEN)/4 + 130;
+static int windowSizeX = TITLE_WINDOW_SIZE_X;
+static int windowSizeY = TITLE_WINDOW_SIZE_Y;
 
 static UI_Panel *ui_title; //title graphic/logo
 static UI_Panel *ui_menu; //menu panel
@@ -55,11 +55,12 @@ namespace title {
 	*/
 	void show() {
 		glutSetWindowTitle("The Risk");
-		windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
-		windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 4 + 200;
+		windowSizeX = TITLE_WINDOW_SIZE_X;
+		windowSizeY = TITLE_WINDOW_SIZE_Y;
 		glutReshapeWindow(windowSizeX, windowSizeY);
 		init();
 		//options::freeUI();
+		glutKeyboardFunc(NULL);
 		glutDisplayFunc(display);
 		glutMouseFunc(mouseInput);
 		glutPassiveMotionFunc(mouseMove);
@@ -99,7 +100,6 @@ void exit() {
 *	Author: Kamil
 */
 static void display() {
-	printMsg(MSG_LOG, "Scene redrawn.");
 	bool windowChanged = false;
 	/*	Get current window sizes and change them accordingly
 	If window sizes have changed, make sure to recreate objects accordingly
@@ -134,8 +134,8 @@ static void display() {
 
 static void settings() {
 	//glutDisplayFunc(NULL);
-	glutMouseFunc(NULL);
-	glutPassiveMotionFunc(NULL);
+	//glutMouseFunc(NULL);
+	//glutPassiveMotionFunc(NULL);
 	//title::freeUI();
 	options::show();
 }
@@ -146,9 +146,6 @@ static void settings() {
 */
 static void init() {
 	glClearColor(0.0f / 255, 0.0f / 255, 0.0f / 255, 0.0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
 	title::freeUI(); //Free memory of UI items in case they already exist
 	ui_title = new UI_Panel(0, 0, windowSizeX, windowSizeY / 4);
 	ui_menu = new UI_Panel(windowSizeX / 5, windowSizeY / 4 + 35, windowSizeX / 5 * 3, windowSizeY / 4 * 3 - 70);
@@ -194,6 +191,7 @@ static void window(){
 	glutDisplayFunc(display);
 	glutMouseFunc(mouseInput);
 	glutPassiveMotionFunc(mouseMove);
+	glutKeyboardFunc(NULL);
 	display();
 	//glutIdleFunc(drawUI);
 	glutMainLoop();
@@ -260,5 +258,6 @@ static void mouseMove(int x, int y) {
 
 static void login() {
 	printMsg(MSG_LOG, "Logging in...");
+	joinGame::show();
 }
 

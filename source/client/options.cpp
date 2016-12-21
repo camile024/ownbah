@@ -6,7 +6,7 @@ Author: Kamil
 
 
 #include "options.h"
-#include "title.h"
+
 
 /*
 *
@@ -15,12 +15,11 @@ Author: Kamil
 */
 static bool windowActive = true;
 
-static int windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
-static int windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 5;
-static float scaleX = windowSizeX / 10;
-static float scaleY = windowSizeY / 10;
+static int windowSizeX = OPTIONS_WINDOW_SIZE_X;
+static int windowSizeY = OPTIONS_WINDOW_SIZE_Y;
+static float scaleX = OPTIONS_WINDOW_SCALE_X;
+static float scaleY = OPTIONS_WINDOW_SCALE_Y;
 
-static UI_Panel *ui_settings; //settings panel
 static UI_Panel *ui_window; //window settings panel
 static UI_Panel *ui_buttons; //bottom panel
 static UI_Panel *ui_account; //account settings panel
@@ -66,12 +65,13 @@ namespace options {
 		//loadSettings();
 		//loadAccData(); //if settings store userAcc data
 		glutSetWindowTitle("Settings");
-		windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
-		windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 5 ;
+		windowSizeX = OPTIONS_WINDOW_SIZE_X;
+		windowSizeY = OPTIONS_WINDOW_SIZE_Y;
 		glutReshapeWindow(windowSizeX, windowSizeY);
-		scaleX = windowSizeX / 10;
-		scaleY = windowSizeY / 10;
+		scaleX = OPTIONS_WINDOW_SCALE_X;
+		scaleY = OPTIONS_WINDOW_SCALE_Y;
 		init();
+		glutKeyboardFunc(NULL);
 		glutDisplayFunc(display);
 		glutMouseFunc(mouseInput);
 		glutPassiveMotionFunc(mouseMove);
@@ -84,11 +84,18 @@ namespace options {
 	void freeUI() {
 		delete ui_window;
 		delete ui_account;
-		delete ui_settings;
 		delete ui_buttons;
 		delete ui_save;
 		delete ui_cancel;
-
+		delete ui_res1024;
+		delete ui_res1280;
+		delete ui_res1600;
+		delete ui_res1920;
+		delete ui_fullscreen;
+		delete ui_savePassword;
+		delete ui_saveUsername;
+		delete ui_lab_account;
+		delete ui_lab_resolution;
 	}
 
 }
@@ -106,8 +113,13 @@ namespace options {
 *	Author: Kamil
 */
 static void display(void) {
-	printMsg(MSG_LOG, "Scene redrawn.");
 	bool windowChanged = false;
+	/*Resize resolution-adjusted items*/
+	/*	Get current window sizes and change them accordingly
+	If window sizes have changed, make sure to resize them
+	*/
+	windowChanged = reshapeWindow(windowSizeX, windowSizeY, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT,
+		MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT);
 	/*Clear the window*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/*Set the viewport and projection matrix accordingly*/
@@ -115,16 +127,9 @@ static void display(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, windowSizeX, windowSizeY, 0, -1.0, 1.0);
-	/*Resize resolution-adjusted items*/
-	/*	Get current window sizes and change them accordingly
-	If window sizes have changed, make sure to resize them
-	*/
-	windowChanged = reshapeWindow(windowSizeX, windowSizeY, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT,
-		MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT);
 	if (windowChanged) {
-		scaleX = windowSizeX / 10;
-		scaleY = windowSizeY / 10;
-		ui_settings->setSizes(0, 0, windowSizeX, windowSizeY);
+		scaleX = OPTIONS_WINDOW_SCALE_X;
+		scaleY = OPTIONS_WINDOW_SCALE_Y;
 		ui_window->setSizes(0, 0, windowSizeX, scaleY * 5);
 		ui_account->setSizes(0, scaleY * 5, windowSizeX, scaleY * 3);
 		ui_buttons->setSizes(0, scaleY * 8, windowSizeX, scaleY * 2);
@@ -133,11 +138,9 @@ static void display(void) {
 	}
 
 	/*Do the actual drawing*/
-	ui_settings->setColorRGB(255, 193, 100, 50);
 	ui_buttons->setColorRGB(255, 193, 100, 100);
 	ui_window->setColorRGB(255, 193, 100, 100);
 	ui_account->setColorRGB(255, 193, 100, 100);
-	ui_settings->draw();
 	ui_buttons->draw();
 	ui_window->draw();
 	ui_account->draw();
@@ -150,12 +153,7 @@ static void display(void) {
 */
 static void init() {
 	glClearColor(0.0f / 255, 0.0f / 255, 0.0f / 255, 0.0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
 	options::freeUI(); //Free memory of UI items in case they already exist
-	/* Main Panel */
-	ui_settings = new UI_Panel(0, 0, windowSizeX, windowSizeY);
 	/* Window Settings */
 	ui_window = new UI_Panel(0, 0, windowSizeX, scaleY * 5);
 	ui_fullscreen = new UI_Checkbox(*ui_window, 15, 10, scaleX * 4, 30, "Full Screen");
@@ -175,7 +173,6 @@ static void init() {
 	ui_cancel = new UI_Button(*ui_buttons, 30 + scaleX * 4.5, 10, scaleX * 4.5, 30, "Cancel");
 
 	/* Panel styles */
-	ui_settings->setStyle(STYLE_NORMAL);
 	ui_window->setStyle(STYLE_NORMAL);
 	ui_account->setStyle(STYLE_NORMAL);
 	ui_buttons->setStyle(STYLE_NORMAL);
@@ -202,7 +199,7 @@ static void mouseInput(int key, int state, int x, int y) {
 		std::vector<UI_Node*>& nodes3 = ui_account->getNodes();
 
 		std::vector<UI_Node*> nodes;
-		nodes.reserve(nodes1.size() + nodes2.size());
+		nodes.reserve(nodes1.size() + nodes2.size() + nodes3.size());
 		nodes.insert(nodes.end(), nodes1.begin(), nodes1.end());
 		nodes.insert(nodes.end(), nodes2.begin(), nodes2.end());
 		nodes.insert(nodes.end(), nodes3.begin(), nodes3.end());

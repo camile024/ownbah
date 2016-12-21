@@ -12,7 +12,7 @@ other IDE/OS, just make sure to get the libraries to make the project
 compile on your machine
 
 Ask me for help with libraries (they can be a pain to compile and get working)
-I am creating my own GUI classes (gui.h/gui.cpp) based on glut
+I am creating my own GUI classes (gui/UIMain.h) based on glut
 ========================================================
 */
 
@@ -20,15 +20,6 @@ I am creating my own GUI classes (gui.h/gui.cpp) based on glut
 
 #include "main.h"
 #include "title.h"
-
-//game version
-#define GAME_VER 0.1
-
-//message types
-#define MSG_NORMAL	0
-#define	MSG_ERROR	1
-#define	MSG_LOG		2
-#define	MSG_NETWORK	3
 
 //checks if dev argument is on, if it is, proceeds to dev stage where you can control the flow of the program
 int main(int argc, char* argv[]) {
