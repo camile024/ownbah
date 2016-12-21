@@ -18,6 +18,7 @@
 
 class UI_RadioButton : public UI_Node {
 	std::string caption;
+	void* font;
 	void(*action)(void);
 	bool checked = false;
 	UI_Panel &parent;
@@ -34,6 +35,7 @@ public:
 	byte getState();
 	void onClick();
 	void setAction(void(*)());
+	void setFont(void*);
 	void draw();
 	std::string getName(void) { return name; };
 	UI_Panel& getParent() { return parent; };

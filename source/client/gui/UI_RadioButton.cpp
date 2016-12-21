@@ -18,6 +18,7 @@ UI_RadioButton::UI_RadioButton(UI_Panel &pan, float x, float y, float width, flo
 	this->caption = caption;
 	group = 0;
 	pan.addNode(*this);
+	font = GLUT_BITMAP_9_BY_15;
 }
 
 /*
@@ -25,6 +26,10 @@ UI_RadioButton::UI_RadioButton(UI_Panel &pan, float x, float y, float width, flo
 */
 byte UI_RadioButton::getState() {
 	return state;
+}
+
+void UI_RadioButton::setFont(void* font) {
+	this->font = font;
 }
 
 /*
@@ -148,6 +153,6 @@ void UI_RadioButton::draw() {
 	}
 
 	/* ---Draw text---*/
-	drawString(GLUT_BITMAP_HELVETICA_18, caption, x + width / 15 + boxWidth + 5, y + 20);
+	drawString(font, caption, x + width / 15 + boxWidth + 5, y + 20);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }

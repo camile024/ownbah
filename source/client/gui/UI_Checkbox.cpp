@@ -17,8 +17,13 @@ UI_Checkbox::UI_Checkbox(UI_Panel &pan, float x, float y, float width, float hei
 	this->height = height;
 	this->caption = caption;
 	pan.addNode(*this);
+	font = GLUT_BITMAP_9_BY_15;
 }
 
+
+void UI_Checkbox::setFont(void* font) {
+	this->font = font;
+}
 /*
 *	Returns current checkbox state
 */
@@ -137,6 +142,6 @@ void UI_Checkbox::draw() {
 	}
 
 	/* ---Draw text---*/
-	drawString(GLUT_BITMAP_HELVETICA_18, caption, x + width / 15 + boxWidth + 5, y + 20);
+	drawString(font, caption, x + width / 15 + boxWidth + 5, y + 20);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }

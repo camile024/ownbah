@@ -55,7 +55,12 @@ UI_Button::UI_Button(UI_Panel &pan, float x, float y, float width, float height,
 	this->width = width;
 	this->height = height;
 	this->caption = caption;
+	font = GLUT_BITMAP_9_BY_15;
 	pan.addNode(*this);
+}
+
+void UI_Button::setFont(void* font) {
+	this->font = font;
 }
 
 /*
@@ -74,8 +79,6 @@ byte UI_Button::getState() {
 
 /*
 *	Draws dope buttons
-*	Needs putting all the vertices into a single array
-*		for readability
 */
 void UI_Button::draw() {
 	/* Array with coordinates for the button */
@@ -121,6 +124,6 @@ void UI_Button::draw() {
 	glDrawArrays(GL_LINE_LOOP, 0, 6);
 
 	/* ---Draw text---*/
-	drawString(GLUT_BITMAP_HELVETICA_18, caption, x + width / 15, y + 20);
+	drawString(font, caption, x + width / 15, y + 20);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }

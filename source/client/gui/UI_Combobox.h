@@ -17,6 +17,7 @@
 class UI_Combobox : public UI_Node {
 	std::string caption;
 	std::vector<std::string*> items;
+	void* font;
 	void(*action)(void);
 	int selected = -1;
 	UI_Panel &parent;
@@ -29,6 +30,7 @@ public:
 	byte getState() { return state; }
 	void onClick(int, int);
 	void setAction(void(*f)()) { action = f; };
+	void setFont(void*);
 	void draw();
 	void addItem(std::string*);
 	void removeItem(std::string*);

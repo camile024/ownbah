@@ -15,13 +15,15 @@ Author: Kamil
 *
 */
 static int windowSizeX = GetSystemMetrics(SM_CXSCREEN)/5;
-static int windowSizeY = GetSystemMetrics(SM_CYSCREEN)/4+200;
+static int windowSizeY = GetSystemMetrics(SM_CYSCREEN)/4 + 130;
+
 static UI_Panel *ui_title; //title graphic/logo
 static UI_Panel *ui_menu; //menu panel
 static UI_Button *ui_play; //play/join game button
 static UI_Button *ui_host; //host game button
 static UI_Button *ui_options; //options button
 static UI_Button *ui_exit; //exit button
+
 static const int MIN_WINDOW_WIDTH = 350;
 static const int MIN_WINDOW_HEIGHT = 400;
 static const int MAX_WINDOW_WIDTH = 500;
