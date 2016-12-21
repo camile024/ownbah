@@ -13,10 +13,16 @@ UI_Textbox::UI_Textbox(UI_Panel &pan, float x, float y, float width, float heigh
 	font = GLUT_BITMAP_9_BY_15;
 	text = "";
 	pan.addNode(*this);
+	selected = false;
+	maxLength = 30;
 }
 
-void UI_Textbox::onClick() {
-	state = TXT_SELECTED;
+void UI_Textbox::select() {
+	selected = true;
+}
+
+void UI_Textbox::deselect() {
+	selected = false;
 }
 
 void UI_Textbox::setFont(void* font) {
@@ -24,15 +30,24 @@ void UI_Textbox::setFont(void* font) {
 }
 
 void UI_Textbox::setText(std::string txt) {
-	text = txt;
+	if (txt.length() <= maxLength)
+		text = txt;
 }
 
 std::string UI_Textbox::getText() {
 	return text;
 }
 
-void UI_Textbox::addText(std::string txt) {
-	text += txt;
+void UI_Textbox::addChar(char c) {
+	if (text.length() < maxLength) {
+		int c2 = (int)c;
+		if (c > 31 && c < 123)
+			text += c;
+	}
+}
+
+void UI_Textbox::removeChar() {
+	text = text.substr(0, text.length() - 1);
 }
 
 /*
@@ -86,15 +101,14 @@ void UI_Textbox::draw() {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	/* Define color depending on the button state */
 	switch (state) {
-	case TXT_HOVER:
-	case TXT_SELECTED:
-	case TXT_IDLE:
+	case BTN_HOVER:
+	case BTN_ACTIVE:
 		glColor4f(color.r, color.g, color.b, 255);
 		break;
-	case TXT_DOWN:
+	case BTN_DOWN:
 		glColor4f(color.r / 2, color.g / 2, color.b / 2, 100);
 		break;
-	case TXT_DISABLED:
+	case BTN_DISABLED:
 		glColor4f(color.r, color.g, color.b, 170);
 		break;
 	}
@@ -113,7 +127,7 @@ void UI_Textbox::draw() {
 	glDrawArrays(GL_LINE_LOOP, 0, 4);
 
 	/* ---Draw text---*/
-	if (state == TXT_SELECTED) {
+	if (selected) {
 		drawString(font, text + "_", x + width / 15, y + 20);
 	} else {
 		drawString(font, text, x + width / 15, y + 20);

@@ -12,8 +12,12 @@
 #include <gl\GLU.h>
 #include <GL\glut.h>
 #include "gui/UIMain.h"
+
 //custom headers
 #include "clientDebug.h"
+
+//other windows
+#include "title.h"
 
 namespace options {
 	void show();

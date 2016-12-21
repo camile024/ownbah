@@ -24,6 +24,10 @@ void UI_Label::setFont(void* font) {
 	this->font = font;
 }
 
+void UI_Label::setSizes(float x, float y) {
+	this->posX = x;
+	this->posY = y;
+}
 /*
 *	Label constructor
 *	pan - panel the button belongs to
