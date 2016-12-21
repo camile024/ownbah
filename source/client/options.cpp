@@ -14,8 +14,12 @@ Author: Kamil
 *
 */
 static bool windowActive = true;
+
 static int windowSizeX = GetSystemMetrics(SM_CXSCREEN) / 5;
 static int windowSizeY = GetSystemMetrics(SM_CYSCREEN) / 5;
+static float scaleX = windowSizeX / 10;
+static float scaleY = windowSizeY / 10;
+
 static UI_Panel *ui_settings; //settings panel
 static UI_Panel *ui_window; //window settings panel
 static UI_Panel *ui_buttons; //bottom panel
@@ -29,15 +33,18 @@ static UI_RadioButton *ui_res1600;
 static UI_RadioButton *ui_res1920;
 static UI_Checkbox *ui_fullscreen;
 static UI_Checkbox *ui_saveUsername;
+static UI_Checkbox *ui_savePassword;
+static UI_Label *ui_lab_account;
+static UI_Label *ui_lab_resolution;
+
 static UI_RadioButton *lastRadioButton;
 
-//static UI_Checkbox *ui_savePassword;
+
 static const int MIN_WINDOW_WIDTH = 370;
 static const int MIN_WINDOW_HEIGHT = 400;
 static const int MAX_WINDOW_WIDTH = 400;
 static const int MAX_WINDOW_HEIGHT = 400;
-static float scaleX = windowSizeX / 10;
-static float scaleY = windowSizeY / 10;
+
 /*
 *	GLOBAL GLOBALS
 *
@@ -152,14 +159,16 @@ static void init() {
 	/* Window Settings */
 	ui_window = new UI_Panel(0, 0, windowSizeX, scaleY * 5);
 	ui_fullscreen = new UI_Checkbox(*ui_window, 15, 10, scaleX * 4, 30, "Full Screen");
-	ui_res1024 = new UI_RadioButton(*ui_window, 15, 50, scaleX * 4, 30, "1024x576");
-	ui_res1280 = new UI_RadioButton(*ui_window, 30 + scaleX * 4, 50, scaleX * 4, 30, "1280x720");
-	ui_res1600 = new UI_RadioButton(*ui_window, 15, 100, scaleX * 4, 30, "1600x900");
-	ui_res1920 = new UI_RadioButton(*ui_window, 30 + scaleX * 4, 100, scaleX * 4, 30, "1920x1080");
+	ui_lab_resolution = new UI_Label(*ui_window, 15, 40, "Resolution: ");
+	ui_res1024 = new UI_RadioButton(*ui_window, 15, 75, scaleX * 4, 30, "1024x576");
+	ui_res1280 = new UI_RadioButton(*ui_window, 30 + scaleX * 4, 75, scaleX * 4, 30, "1280x720");
+	ui_res1600 = new UI_RadioButton(*ui_window, 15, 125, scaleX * 4, 30, "1600x900");
+	ui_res1920 = new UI_RadioButton(*ui_window, 30 + scaleX * 4, 125, scaleX * 4, 30, "1920x1080");
 	/* Account Settings */
 	ui_account = new UI_Panel(0, scaleY * 5, windowSizeX, scaleY * 3);
-	ui_saveUsername = new UI_Checkbox(*ui_account, 15, 10, windowSizeX / 9 * 4, 30, "Save Username");
-	ui_saveUsername = new UI_Checkbox(*ui_account, 25 + windowSizeX / 9 * 4, 10, windowSizeX / 9 * 4, 30, "Save Password");
+	ui_lab_account = new UI_Label(*ui_account, 15, 5, "Account: ");
+	ui_saveUsername = new UI_Checkbox(*ui_account, 15, 35, windowSizeX / 9 * 4, 30, "Save Username");
+	ui_savePassword = new UI_Checkbox(*ui_account, 25 + windowSizeX / 9 * 4, 35, windowSizeX / 9 * 4, 30, "Save Password");
 	/* Bottom Buttons */
 	ui_buttons = new UI_Panel(0, scaleY * 8, windowSizeX, scaleY * 2);
 	ui_save = new UI_Button(*ui_buttons, 15, 10, scaleX * 4.5, 30, "Save");

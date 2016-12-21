@@ -6,6 +6,13 @@
 #define BTN_DISABLED 2
 #define BTN_HOVER 3
 
+/* Textbox states */
+#define TXT_IDLE 0
+#define TXT_DOWN 1
+#define TXT_SELECTED 2
+#define TXT_DISABLED 3
+#define TXT_HOVER 4
+
 /* Checkbox */
 #define CHECKBOX_ACTIVE 0
 #define CHECKBOX_DOWN 1

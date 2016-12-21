@@ -68,7 +68,7 @@ bool reshapeWindow(int &windowSizeX, int &windowSizeY, int minWidth, int minHeig
 
 /*
 *	Draws a circle
-*	http://slabode.exofire.net/circle_draw.shtml
+*	Credit: http://slabode.exofire.net/circle_draw.shtml
 */
 void drawCircle(float cx, float cy, float r, int num_segments)
 {
@@ -108,7 +108,7 @@ void drawCircle(float cx, float cy, float r, int num_segments)
 
 /*
 *	Draws a filled circle
-*	http://slabode.exofire.net/circle_draw.shtml
+*	Credit: http://slabode.exofire.net/circle_draw.shtml
 */
 void drawFilledCircle(float cx, float cy, float r, int num_segments)
 {

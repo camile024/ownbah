@@ -16,7 +16,12 @@ UI_Combobox::UI_Combobox(UI_Panel &pan, float x, float y, float width, float hei
 	this->width = width;
 	this->height = height;
 	this->caption = caption;
+	font = GLUT_BITMAP_9_BY_15;
 	pan.addNode(*this);
+}
+
+void UI_Combobox::setFont(void* font) {
+	this->font = font;
 }
 
 /*

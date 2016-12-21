@@ -13,11 +13,7 @@
 #include <GL\glut.h>
 
 
-#include "gui/gui.h"
-
-#include "gui/UI_Node.h"
-#include "gui/UI_Panel.h"
-#include "gui/UI_Button.h"
+#include "gui/UIMain.h"
 
 //custom headers
 #include "clientDebug.h"

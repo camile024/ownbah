@@ -15,6 +15,7 @@
 */
 class UI_Button : public UI_Node {
 	std::string caption;
+	void* font;
 	void(*action)(void);
 	UI_Panel &parent;
 	byte state = BTN_ACTIVE;
@@ -32,6 +33,7 @@ public:
 	void draw();
 	void setColor(float, float, float);
 	void setColorRGB(int, int, int);
+	void setFont(void*);
 	std::string getName(void) { return name; };
 	UI_Panel& getParent() { return parent; }
 	UI_Button(UI_Panel&, float, float, float, float, std::string);
